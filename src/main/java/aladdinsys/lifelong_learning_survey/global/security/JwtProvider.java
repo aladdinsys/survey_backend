@@ -35,7 +35,7 @@ public class JwtProvider {
 		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
 	}
 
-	public String extractUserId(String token) {
+	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
 
