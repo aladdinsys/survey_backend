@@ -1,0 +1,46 @@
+
+spring:
+#  config:
+#    activate:
+#      on-profile: local
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/lifelong_learning;
+    driver-class-name: org.h2.Driver
+    username: aladdin
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        format_sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+jwt:
+  secret: 2vC3zoA51TcsELAajX6GMdwA4AvGVlluBfm5zPrtwVMI9mxfw1loOO7gqd2UfikiT6eUCMfPMdq8P6xoZFMR1g
+  exp:
+    access: 3600000
+
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+logging:
+  level:
+    org: INFO
+    com: INFO
+    root: DEBUG
