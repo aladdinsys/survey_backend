@@ -1,0 +1,13 @@
+### Post Request
+# @no-cookie-jar
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "userId": "test",
+  "password": "test",
+  "name": "홍길동",
+  "code": "1234",
+  "email": "kaineus86@gmail.com"
+}
+

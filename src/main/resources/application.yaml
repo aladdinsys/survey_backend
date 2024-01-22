@@ -41,6 +41,9 @@ server:
 
 logging:
   level:
-    org: INFO
+    org:
+      hibernate:
+        SQL: debug
+        type: trace
     com: INFO
     root: DEBUG
