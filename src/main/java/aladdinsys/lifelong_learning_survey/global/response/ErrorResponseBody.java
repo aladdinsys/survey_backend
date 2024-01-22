@@ -39,6 +39,6 @@ public class ErrorResponseBody extends ResponseBody {
 
   public static ErrorResponseBody of(HttpStatus status, String message) {
     return new ErrorResponseBody(
-        status, message, String.valueOf(status.value()), "NullPointerException");
+        status, message, String.valueOf(status.value()), status.name());
   }
 }

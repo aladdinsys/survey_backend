@@ -2,6 +2,11 @@ package aladdinsys.lifelong_learning_survey.domains.auth.service;
 
 import java.util.regex.Pattern;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,14 +19,19 @@ import aladdinsys.lifelong_learning_survey.global.constant.ErrorCode;
 import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
 import aladdinsys.lifelong_learning_survey.global.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
 
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	private final JwtProvider jwtProvider;
+
+	private final AuthenticationManager authenticationManager;
 
 	@Transactional
 	public void signUp(final SignUpRequestDto signUpRequestDto) {
@@ -40,7 +50,7 @@ public class AuthenticationService {
 
 		var user = User.builder()
 			.userId(signUpRequestDto.userId())
-			.password(signUpRequestDto.password())
+			.password(passwordEncoder.encode(signUpRequestDto.password()))
 			.name(signUpRequestDto.name())
 			.code(signUpRequestDto.code())
 			.email(signUpRequestDto.email())
@@ -61,6 +71,17 @@ public class AuthenticationService {
 	@Transactional
 	public SignInResponseDto signIn(final SignInRequestDto signInRequestDto) {
 
+		try {
+			authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(
+					signInRequestDto.userId(),
+					signInRequestDto.password()
+				)
+			);
+		} catch (AuthenticationException e) {
+			log.error("Invalid Id or Password : {}", e.getMessage());
+			throw new CustomException(ErrorCode.INVALID_ID_OR_PASSWORD);
+		}
 		var user = userRepository.findByUserId(signInRequestDto.userId())
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 

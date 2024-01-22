@@ -52,7 +52,6 @@ public class User implements UserDetails {
 	private String email;
 
 	@Column(name = "role")
-	@ColumnDefault("'ROLE_USER'")
 	@Enumerated(EnumType.STRING)
 	private Role role;
 

@@ -9,6 +9,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import aladdinsys.lifelong_learning_survey.global.response.ErrorResponseBody;
 import jakarta.validation.ConstraintViolationException;
@@ -37,6 +38,12 @@ public class CustomExceptionHandler {
       HttpRequestMethodNotSupportedException e) {
     LOGGER.error("HttpRequestMethodNotSupportedException", e);
     return ResponseEntity.badRequest().body("해당 endpoint 를 찾지 못했습니다. method 와 url 을 확인해주세요");
+  }
+
+  @ExceptionHandler(NoResourceFoundException.class)
+  public ErrorResponseBody handleException(Exception e) {
+    LOGGER.error("NoResourceFoundException", e);
+    return ErrorResponseBody.of(HttpStatus.NOT_FOUND, "해당 경로를 찾지 못했습니다. url 을 확인해주세요");
   }
 
 }
