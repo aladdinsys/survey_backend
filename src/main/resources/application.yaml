@@ -27,7 +27,10 @@ spring:
 jwt:
   secret: 2vC3zoA51TcsELAajX6GMdwA4AvGVlluBfm5zPrtwVMI9mxfw1loOO7gqd2UfikiT6eUCMfPMdq8P6xoZFMR1g
   exp:
-    access: 3600000
+    access-token:
+      expiration: 3600000
+    refresh-token:
+      expiration: 86400000
 
 server:
   port: 8080

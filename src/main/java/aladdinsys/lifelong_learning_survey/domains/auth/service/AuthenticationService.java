@@ -86,6 +86,7 @@ public class AuthenticationService {
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
 		var jwtToken = jwtProvider.generateToken(user);
+		var refreshToken = jwtProvider.generateRefreshToken(user);
 
 		return new SignInResponseDto(jwtToken, user.getRole(), user.getName(), user.getCode());
 	}

@@ -8,9 +8,13 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import aladdinsys.lifelong_learning_survey.domains.user.entity.User;
 import aladdinsys.lifelong_learning_survey.global.constant.ErrorCode;
 import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
 import io.jsonwebtoken.Claims;
@@ -30,6 +34,12 @@ public class JwtProvider {
 	@Value("${jwt.secret}")
 	private String secretKey;
 
+	@Value("${jwt.exp.access-token.expiration}")
+	private long accessExpiration;
+
+	@Value("${jwt.exp.refresh-token.expiration}")
+	private long refreshExpiration;
+
 	@PostConstruct
 	protected void init() {
 		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
@@ -47,7 +57,7 @@ public class JwtProvider {
 	private Claims extractAllClaims(String token) {
 		return Jwts
 			.parserBuilder()
-			.setSigningKey(getSigningKey())
+			.setSigningKey(getSignInKey())
 			.build()
 			.parseClaimsJws(token)
 			.getBody();
@@ -66,7 +76,26 @@ public class JwtProvider {
 			.setSubject(userDetails.getUsername())
 			.setIssuedAt(new Date(System.currentTimeMillis()))
 			.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
+			.signWith(getSignInKey(), SignatureAlgorithm.HS256)
+			.compact();
+	} public String generateRefreshToken(
+		UserDetails userDetails
+	) {
+		return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+	}
+
+	private String buildToken(
+		Map<String, Object> extraClaims,
+		UserDetails userDetails,
+		long expiration
+	) {
+		return Jwts
+			.builder()
+			.setClaims(extraClaims)
+			.setSubject(userDetails.getUsername())
+			.setIssuedAt(new Date(System.currentTimeMillis()))
+			.setExpiration(new Date(System.currentTimeMillis() + expiration))
+			.signWith(getSignInKey(), SignatureAlgorithm.HS256)
 			.compact();
 	}
 
@@ -74,7 +103,7 @@ public class JwtProvider {
 		try {
 			Jwts
 				.parserBuilder()
-				.setSigningKey(getSigningKey())
+				.setSigningKey(getSignInKey())
 				.build()
 				.parseClaimsJws(token);
 
@@ -88,8 +117,9 @@ public class JwtProvider {
 		}
 	}
 
-	private Key getSigningKey() {
+	private Key getSignInKey() {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
+
 }
