@@ -52,4 +52,14 @@ public class User {
   public void prePersist() {
     this.role = Role.USER;
   }
+
+  public void changePassword(final String newPassword) {
+    this.password = newPassword;
+  }
+
+  public void updateInfo(final String name, final String code, final String email) {
+    this.name = name;
+    this.code = code;
+    this.email = email;
+  }
 }
