@@ -1,4 +1,4 @@
-/* (C) 2023 */
+/* (C) 2023 AladdinSystem License */
 package aladdinsys.lifelong_learning_survey.global.response;
 
 import static aladdinsys.lifelong_learning_survey.global.constant.SuccessCode.*;

@@ -68,6 +68,6 @@ spotless {
         removeUnusedImports()
         importOrder()
 
-        licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
+        licenseHeader '/* (C) $YEAR AladdinSystem License */' // or licenseHeaderFile
     }
 }

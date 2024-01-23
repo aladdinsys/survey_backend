@@ -1,4 +1,4 @@
-/* (C) 2024 */
+/* (C) 2024 AladdinSystem License */
 package aladdinsys.lifelong_learning_survey.domains.user.service;
 
 import static aladdinsys.lifelong_learning_survey.global.constant.ErrorCode.*;

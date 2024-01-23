@@ -1,4 +1,4 @@
-/* (C) 2024 */
+/* (C) 2024 AladdinSystem License */
 package aladdinsys.lifelong_learning_survey.global.security;
 
 import aladdinsys.lifelong_learning_survey.global.exception.CustomException;

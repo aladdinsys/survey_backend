@@ -1,4 +1,4 @@
-/* (C) 2024 */
+/* (C) 2024 AladdinSystem License */
 package aladdinsys.lifelong_learning_survey;
 
 import org.springframework.boot.SpringApplication;

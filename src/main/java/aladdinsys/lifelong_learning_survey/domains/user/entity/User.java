@@ -1,4 +1,4 @@
-/* (C) 2024 */
+/* (C) 2024 AladdinSystem License */
 package aladdinsys.lifelong_learning_survey.domains.user.entity;
 
 import aladdinsys.lifelong_learning_survey.domains.user.constant.Role;
