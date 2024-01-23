@@ -3,9 +3,8 @@ package aladdinsys.lifelong_learning_survey.global.constant;
 
 import static org.springframework.http.HttpStatus.*;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 public enum SuccessCode implements Code {

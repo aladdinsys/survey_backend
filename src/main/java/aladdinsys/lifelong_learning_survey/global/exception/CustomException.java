@@ -1,9 +1,9 @@
 /* (C) 2023 */
 package aladdinsys.lifelong_learning_survey.global.exception;
 
-import org.springframework.http.HttpStatus;
 import aladdinsys.lifelong_learning_survey.global.constant.ErrorCode;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class CustomException extends RuntimeException {

@@ -1,11 +1,10 @@
 /* (C) 2023 */
 package aladdinsys.lifelong_learning_survey.global.response;
 
-import org.springframework.http.HttpStatus;
-
 import aladdinsys.lifelong_learning_survey.global.constant.ErrorCode;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class ErrorResponseBody extends ResponseBody {
@@ -38,7 +37,6 @@ public class ErrorResponseBody extends ResponseBody {
   }
 
   public static ErrorResponseBody of(HttpStatus status, String message) {
-    return new ErrorResponseBody(
-        status, message, String.valueOf(status.value()), status.name());
+    return new ErrorResponseBody(status, message, String.valueOf(status.value()), status.name());
   }
 }

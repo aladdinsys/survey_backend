@@ -1,17 +1,14 @@
+/* (C) 2024 */
 package aladdinsys.lifelong_learning_survey.global.response;
-
 
 import static aladdinsys.lifelong_learning_survey.global.constant.SuccessCode.*;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-
-import org.springframework.http.HttpStatus;
-
 import aladdinsys.lifelong_learning_survey.global.constant.SuccessCode;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class ResponseBody {

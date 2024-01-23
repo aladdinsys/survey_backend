@@ -3,11 +3,10 @@ package aladdinsys.lifelong_learning_survey.global.response;
 
 import static aladdinsys.lifelong_learning_survey.global.constant.SuccessCode.*;
 
-import org.springframework.http.HttpStatus;
-
 import aladdinsys.lifelong_learning_survey.global.constant.SuccessCode;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class DataResponseBody<T> extends ResponseBody {

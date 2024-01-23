@@ -8,3 +8,7 @@ Authorization: Bearer {{access-token}}
 ### 사용자 정보
 GET {{domain}}:{{port}}/users/1
 Authorization: Bearer {{access-token}}
+
+### 사용자 정보
+GET {{domain}}:{{port}}/users/my-info
+Authorization: Bearer {{access-token}}

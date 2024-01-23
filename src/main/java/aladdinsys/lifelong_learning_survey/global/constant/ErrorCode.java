@@ -3,11 +3,9 @@ package aladdinsys.lifelong_learning_survey.global.constant;
 
 import static org.springframework.http.HttpStatus.*;
 
-import org.springframework.http.HttpStatus;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor

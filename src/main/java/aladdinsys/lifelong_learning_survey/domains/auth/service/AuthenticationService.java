@@ -1,13 +1,7 @@
+/* (C) 2024 */
 package aladdinsys.lifelong_learning_survey.domains.auth.service;
 
-import java.util.regex.Pattern;
-
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static aladdinsys.lifelong_learning_survey.global.constant.ErrorCode.*;
 
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.RefreshTokenDto;
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignInRequestDto;
@@ -15,107 +9,119 @@ import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignInResponseDto;
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignUpRequestDto;
 import aladdinsys.lifelong_learning_survey.domains.user.entity.User;
 import aladdinsys.lifelong_learning_survey.domains.user.repository.UserRepository;
-import aladdinsys.lifelong_learning_survey.global.constant.ErrorCode;
 import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
+import aladdinsys.lifelong_learning_survey.global.security.CustomUserDetails;
 import aladdinsys.lifelong_learning_survey.global.security.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthenticationService {
 
-	private final UserRepository userRepository;
-	private final PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
-	private final JwtProvider jwtProvider;
+  private final JwtProvider jwtProvider;
 
-	private final AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
 
-	@Transactional
-	public void signUp(final SignUpRequestDto signUpRequestDto) {
+  @Transactional
+  public void signUp(final SignUpRequestDto signUpRequestDto) {
 
-		var userId = signUpRequestDto.userId();
-		userRepository.findByUserId(userId).ifPresent(user -> {
-			throw new CustomException(ErrorCode.DUPLICATE_USERID);
-		});
+    var userId = signUpRequestDto.userId();
+    userRepository
+        .findByUserId(userId)
+        .ifPresent(
+            user -> {
+              throw new CustomException(DUPLICATE_USERID);
+            });
 
-		boolean isValid = validateEmail(signUpRequestDto.email());
-		if (!isValid) {
-			throw new CustomException(ErrorCode.INVALID_EMAIL);
-		}
-		
-		// TODO CODE 정규식 검사 필요?
+    boolean isValid = validateEmail(signUpRequestDto.email());
+    if (!isValid) {
+      throw new CustomException(INVALID_EMAIL);
+    }
 
-		var user = User.builder()
-			.userId(signUpRequestDto.userId())
-			.password(passwordEncoder.encode(signUpRequestDto.password()))
-			.name(signUpRequestDto.name())
-			.code(signUpRequestDto.code())
-			.email(signUpRequestDto.email())
-			.build();
+    // TODO CODE 정규식 검사 필요?
 
-		userRepository.save(user);
-	}
+    var user =
+        User.builder()
+            .userId(signUpRequestDto.userId())
+            .password(passwordEncoder.encode(signUpRequestDto.password()))
+            .name(signUpRequestDto.name())
+            .code(signUpRequestDto.code())
+            .email(signUpRequestDto.email())
+            .build();
 
-	private boolean validateEmail(String email) {
-		var regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-			+ "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+    userRepository.save(user);
+  }
 
-		return Pattern.compile(regexPattern)
-			.matcher(email)
-			.matches();
-	}
+  private boolean validateEmail(String email) {
+    var regexPattern =
+        "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+            + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
 
-	@Transactional
-	public SignInResponseDto signIn(final SignInRequestDto signInRequestDto) {
+    return Pattern.compile(regexPattern).matcher(email).matches();
+  }
 
-		try {
-			authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-					signInRequestDto.userId(),
-					signInRequestDto.password()
-				)
-			);
-		} catch (AuthenticationException e) {
-			log.error("Invalid Id or Password : {}", e.getMessage());
-			throw new CustomException(ErrorCode.INVALID_ID_OR_PASSWORD);
-		}
-		var user = userRepository.findByUserId(signInRequestDto.userId())
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+  @Transactional
+  public SignInResponseDto signIn(final SignInRequestDto signInRequestDto) {
 
-		var jwtToken = jwtProvider.generateAccessToken(user);
-		var refreshToken = jwtProvider.generateRefreshToken(user);
+    try {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(
+              signInRequestDto.userId(), signInRequestDto.password()));
+    } catch (AuthenticationException e) {
+      log.error("Invalid Id or Password : {}", e.getMessage());
+      throw new CustomException(INVALID_ID_OR_PASSWORD);
+    }
 
-		return SignInResponseDto.builder()
-			.accessToken(jwtToken)
-			.refreshToken(refreshToken)
-			.role(user.getRole())
-			.name(user.getName())
-			.code(user.getCode())
-			.build();
+    User user =
+        userRepository
+            .findByUserId(signInRequestDto.userId())
+            .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-	}
+    CustomUserDetails userDetails = new CustomUserDetails(user);
 
-	public RefreshTokenDto refreshToken(
-		HttpServletRequest request
-	) {
+    String jwtToken = jwtProvider.generateAccessToken(userDetails);
+    String refreshToken = jwtProvider.generateRefreshToken(userDetails);
 
-		var refreshToken = jwtProvider.getJwtFromRequest(request);
-		var userId = jwtProvider.extractUsername(refreshToken);
+    return SignInResponseDto.builder()
+        .accessToken(jwtToken)
+        .refreshToken(refreshToken)
+        .role(user.getRole())
+        .name(user.getName())
+        .code(user.getCode())
+        .build();
+  }
 
-		var user = userRepository.findByUserId(userId)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+  public RefreshTokenDto refreshToken(HttpServletRequest request) {
 
-		if (!jwtProvider.validateToken(refreshToken)) {
-			throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
-		}
+    String refreshToken = jwtProvider.getJwtFromRequest(request);
+    String userId = jwtProvider.extractUsername(refreshToken);
 
-		var accessToken = jwtProvider.generateAccessToken(user);
-		var newRefreshToken = jwtProvider.generateRefreshToken(user);
+    CustomUserDetails userDetails =
+        userRepository
+            .findByUserId(userId)
+            .map(CustomUserDetails::new)
+            .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-		return new RefreshTokenDto(accessToken, newRefreshToken);
-	}
+    if (!jwtProvider.validateToken(refreshToken)) {
+      throw new CustomException(INVALID_JWT_TOKEN);
+    }
+
+    String accessToken = jwtProvider.generateAccessToken(userDetails);
+    String newRefreshToken = jwtProvider.generateRefreshToken(userDetails);
+
+    return new RefreshTokenDto(accessToken, newRefreshToken);
+  }
 }

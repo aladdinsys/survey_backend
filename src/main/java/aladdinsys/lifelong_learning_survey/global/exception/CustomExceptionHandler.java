@@ -1,6 +1,9 @@
 /* (C) 2023 */
 package aladdinsys.lifelong_learning_survey.global.exception;
 
+import aladdinsys.lifelong_learning_survey.global.response.ErrorResponseBody;
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -10,10 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
-
-import aladdinsys.lifelong_learning_survey.global.response.ErrorResponseBody;
-import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
@@ -45,5 +44,4 @@ public class CustomExceptionHandler {
     LOGGER.error("NoResourceFoundException", e);
     return ErrorResponseBody.of(HttpStatus.NOT_FOUND, "해당 경로를 찾지 못했습니다. url 을 확인해주세요");
   }
-
 }
