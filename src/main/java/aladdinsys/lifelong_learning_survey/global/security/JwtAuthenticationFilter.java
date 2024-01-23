@@ -1,24 +1,36 @@
 package aladdinsys.lifelong_learning_survey.global.security;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Function;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import aladdinsys.lifelong_learning_survey.global.constant.ErrorCode;
+import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
+import aladdinsys.lifelong_learning_survey.global.response.ErrorResponseBody;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
@@ -31,33 +43,50 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		@Nonnull FilterChain filterChain
 	) throws ServletException, IOException {
 
-		final String authHeader = request.getHeader("Authorization");
-		final String jwt;
-		final String userId;
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+		try {
+			Optional.of(request)
+				.filter(this::extracted)
+				.map(jwtProvider::getJwtFromRequest)
+				.filter(jwtProvider::validateToken)
+				.map(jwtProvider::extractUsername)
+				.map(userDetailsService::loadUserByUsername)
+				.ifPresent(userDetails -> setAuthenticationContext(request, userDetails));
+		} catch (CustomException e) {
 
-		jwt = authHeader.substring(7);
-		userId = jwtProvider.extractUsername(jwt);
+			ObjectMapper objectMapper = new ObjectMapper();
+			response.setStatus(e.getErrorCode().getHttpStatus().value());
+			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+			response.setCharacterEncoding("UTF-8");
 
-		if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			final UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
-			if (jwtProvider.validateToken(jwt)) {
-				final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-					userDetails,
-					null,
-					userDetails.getAuthorities());
+			var errorResponse = ErrorResponseBody.of(e.getErrorCode(), e.getErrorCode().getMessage());
 
-				authToken.setDetails(
-					new WebAuthenticationDetailsSource().buildDetails(request)
-				);
-
-				SecurityContextHolder.getContext().setAuthentication(authToken);
+			try {
+				response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+			} catch (IOException ioException) {
+				log.error(ioException.getMessage());
 			}
+			return;
 		}
 
 		filterChain.doFilter(request, response);
 	}
+
+	private void setAuthenticationContext(HttpServletRequest request, UserDetails userDetails) {
+		final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+			userDetails,
+			null,
+			userDetails.getAuthorities());
+
+		authToken.setDetails(
+			new WebAuthenticationDetailsSource().buildDetails(request)
+		);
+
+		SecurityContextHolder.getContext().setAuthentication(authToken);
+	}
+
+	private boolean extracted(HttpServletRequest request) {
+		var path = request.getRequestURI();
+		return !path.equals("/auth/sign-up") && !path.equals("/auth/sign-in");
+	}
+
 }

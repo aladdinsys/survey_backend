@@ -1,7 +1,9 @@
 package aladdinsys.lifelong_learning_survey.domains.auth.service;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -9,7 +11,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import aladdinsys.lifelong_learning_survey.domains.auth.dto.RefreshTokenDto;
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignInRequestDto;
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignInResponseDto;
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignUpRequestDto;
@@ -18,6 +24,8 @@ import aladdinsys.lifelong_learning_survey.domains.user.repository.UserRepositor
 import aladdinsys.lifelong_learning_survey.global.constant.ErrorCode;
 import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
 import aladdinsys.lifelong_learning_survey.global.security.JwtProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -85,9 +93,36 @@ public class AuthenticationService {
 		var user = userRepository.findByUserId(signInRequestDto.userId())
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-		var jwtToken = jwtProvider.generateToken(user);
+		var jwtToken = jwtProvider.generateAccessToken(user);
 		var refreshToken = jwtProvider.generateRefreshToken(user);
 
-		return new SignInResponseDto(jwtToken, user.getRole(), user.getName(), user.getCode());
+		return SignInResponseDto.builder()
+			.accessToken(jwtToken)
+			.refreshToken(refreshToken)
+			.role(user.getRole())
+			.name(user.getName())
+			.code(user.getCode())
+			.build();
+
+	}
+
+	public RefreshTokenDto refreshToken(
+		HttpServletRequest request
+	) {
+
+		var refreshToken = jwtProvider.getJwtFromRequest(request);
+		var userId = jwtProvider.extractUsername(refreshToken);
+
+		var user = userRepository.findByUserId(userId)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+		if (!jwtProvider.validateToken(refreshToken)) {
+			throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
+		}
+
+		var accessToken = jwtProvider.generateAccessToken(user);
+		var newRefreshToken = jwtProvider.generateRefreshToken(user);
+
+		return new RefreshTokenDto(accessToken, newRefreshToken);
 	}
 }

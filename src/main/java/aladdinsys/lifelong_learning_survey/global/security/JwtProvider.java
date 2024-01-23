@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,24 +26,30 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class JwtProvider {
 
-	@Value("${jwt.secret}")
-	private String secretKey;
 
-	@Value("${jwt.exp.access-token.expiration}")
+	@Value("${jwt.access-token.secret}")
+	private String accessSecretKey;
+
+	@Value("${jwt.access-token.expiration}")
 	private long accessExpiration;
 
-	@Value("${jwt.exp.refresh-token.expiration}")
+	@Value("${jwt.refresh-token.secret}")
+	private String refreshSecretKey;
+
+	@Value("${jwt.refresh-token.expiration}")
 	private long refreshExpiration;
 
 	@PostConstruct
 	protected void init() {
-		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+		accessSecretKey = Base64.getEncoder().encodeToString(accessSecretKey.getBytes());
+		refreshSecretKey = Base64.getEncoder().encodeToString(refreshSecretKey.getBytes());
 	}
 
 	public String extractUsername(String token) {
@@ -62,25 +69,16 @@ public class JwtProvider {
 			.parseClaimsJws(token)
 			.getBody();
 	}
-	public String generateToken(UserDetails userDetails) {
-		return generateToken(new HashMap<>(), userDetails);
+
+	public String generateAccessToken(UserDetails userDetails) {
+		return generateAccessToken(new HashMap<>(), userDetails);
 	}
 
-	public String generateToken(
-		Map<String, Object> extraClaims,
-		UserDetails userDetails
-	) {
-		return Jwts
-			.builder()
-			.setClaims(extraClaims)
-			.setSubject(userDetails.getUsername())
-			.setIssuedAt(new Date(System.currentTimeMillis()))
-			.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-			.signWith(getSignInKey(), SignatureAlgorithm.HS256)
-			.compact();
-	} public String generateRefreshToken(
-		UserDetails userDetails
-	) {
+	public String generateAccessToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+		return buildToken(extraClaims, userDetails, accessExpiration);
+	}
+
+	public String generateRefreshToken(UserDetails userDetails) {
 		return buildToken(new HashMap<>(), userDetails, refreshExpiration);
 	}
 
@@ -118,8 +116,17 @@ public class JwtProvider {
 	}
 
 	private Key getSignInKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+		byte[] keyBytes = Decoders.BASE64.decode(accessSecretKey);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
+
+	public String getJwtFromRequest(HttpServletRequest request) {
+		String bearerToken = request.getHeader("Authorization");
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+			return bearerToken.substring(7);
+		}
+		throw new CustomException(ErrorCode.INVALID_TOKEN_FORMAT);
+	}
+
 
 }

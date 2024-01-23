@@ -25,12 +25,12 @@ spring:
       matching-strategy: ant_path_matcher
 
 jwt:
-  secret: 2vC3zoA51TcsELAajX6GMdwA4AvGVlluBfm5zPrtwVMI9mxfw1loOO7gqd2UfikiT6eUCMfPMdq8P6xoZFMR1g
-  exp:
-    access-token:
-      expiration: 3600000
-    refresh-token:
-      expiration: 86400000
+  access-token:
+    secret: +iBcUJRWGvl+94+ow4nXV1fzWIq4rph8x7MyRmrtWio=
+    expiration: 10000
+  refresh-token:
+    secret: gtzRlqF6bIkmOi5i15A9G5xbLdwiAMmZi6JPOeemC1E=
+    expiration: 86400000
 
 server:
   port: 8080
