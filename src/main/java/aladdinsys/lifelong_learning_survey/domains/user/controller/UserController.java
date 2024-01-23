@@ -49,7 +49,7 @@ public class UserController {
     return ResponseBody.of(SUCCESS_PATCH);
   }
 
-  @PatchMapping(value = "/{id}", produces = "application/json")
+  @PatchMapping(value = "/{id}/change-password", produces = "application/json")
   public ResponseBody changePassword(
       @PathVariable("id") Long id,
       @RequestBody ChangePasswordDto dto
