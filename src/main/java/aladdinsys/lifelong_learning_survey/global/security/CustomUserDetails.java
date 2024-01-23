@@ -8,12 +8,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import aladdinsys.lifelong_learning_survey.domains.user.entity.User;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-	private User user;
+	private final User user;
+
+	public CustomUserDetails(User user) {
+		this.user = user;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -36,7 +36,7 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public UserResponseDto findByUserId(Principal principal) {
+	public UserResponseDto myInfo(Principal principal) {
 		var userId = principal.getName();
 		User user = repository.findByUserId(userId)
 			.orElseThrow(() -> new CustomException(NOT_FOUND_USER));

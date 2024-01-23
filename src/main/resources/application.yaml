@@ -20,14 +20,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
 
 jwt:
   access-token:
     secret: +iBcUJRWGvl+94+ow4nXV1fzWIq4rph8x7MyRmrtWio=
-    expiration: 10000
+    expiration: 600000
   refresh-token:
     secret: gtzRlqF6bIkmOi5i15A9G5xbLdwiAMmZi6JPOeemC1E=
     expiration: 86400000
@@ -42,9 +39,6 @@ server:
 
 logging:
   level:
-    org:
-      hibernate:
-        SQL: debug
-        type: trace
-    com: INFO
+    org: DEBUG
+    com: DEBUG
     root: DEBUG

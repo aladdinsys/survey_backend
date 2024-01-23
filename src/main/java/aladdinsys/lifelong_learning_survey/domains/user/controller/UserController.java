@@ -25,9 +25,9 @@ public class UserController {
 		return DataResponseBody.of(service.findAll());
 	}
 
-	@GetMapping(value = "/me", produces = "application/json")
-	public DataResponseBody<UserResponseDto> getEmployeeByUserId(Principal principal) {
-		return DataResponseBody.of(service.findByUserId(principal));
+	@GetMapping(value = "/my-info", produces = "application/json")
+	public DataResponseBody<UserResponseDto> getMyInfo(Principal principal) {
+		return DataResponseBody.of(service.myInfo(principal));
 	}
 
 }

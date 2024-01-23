@@ -1,19 +1,13 @@
 package aladdinsys.lifelong_learning_survey.domains.auth.service;
 
-import java.io.IOException;
 import java.util.regex.Pattern;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.RefreshTokenDto;
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignInRequestDto;
@@ -25,7 +19,6 @@ import aladdinsys.lifelong_learning_survey.global.constant.ErrorCode;
 import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
 import aladdinsys.lifelong_learning_survey.global.security.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
