@@ -1,6 +1,8 @@
 /* (C) 2024 AladdinSystem License */
 package aladdinsys.lifelong_learning_survey.global.security;
 
+import static aladdinsys.lifelong_learning_survey.global.constant.ErrorCode.*;
+
 import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
 import aladdinsys.lifelong_learning_survey.global.response.ErrorResponseBody;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       Optional.of(request)
           .filter(this::extracted)
           .map(jwtProvider::getJwtFromRequest)
-          .filter(jwtProvider::validateToken)
+          .filter(jwtProvider::isAccessTokenValid)
           .map(jwtProvider::extractUsername)
           .map(userDetailsService::loadUserByUsername)
           .ifPresent(userDetails -> setAuthenticationContext(request, userDetails));
@@ -61,6 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       } catch (IOException ioException) {
         log.error(ioException.getMessage());
       }
+
       return;
     }
 
@@ -78,6 +81,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private boolean extracted(HttpServletRequest request) {
     var path = request.getRequestURI();
-    return !path.equals("/auth/sign-up") && !path.equals("/auth/sign-in");
+    return !path.equals("/auth/sign-up")
+        && !path.equals("/auth/sign-in")
+        && !path.equals("/auth/refresh-token");
   }
 }

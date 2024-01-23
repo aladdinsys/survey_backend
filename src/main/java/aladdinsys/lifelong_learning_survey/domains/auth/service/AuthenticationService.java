@@ -10,12 +10,17 @@ import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignUpRequestDto;
 import aladdinsys.lifelong_learning_survey.domains.user.entity.User;
 import aladdinsys.lifelong_learning_survey.domains.user.repository.UserRepository;
 import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
+import aladdinsys.lifelong_learning_survey.global.response.ErrorResponseBody;
 import aladdinsys.lifelong_learning_survey.global.security.CustomUserDetails;
 import aladdinsys.lifelong_learning_survey.global.security.JwtProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -104,10 +109,19 @@ public class AuthenticationService {
         .build();
   }
 
-  public RefreshTokenDto refreshToken(HttpServletRequest request) {
+  public RefreshTokenDto refreshToken(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
 
     String refreshToken = jwtProvider.getJwtFromRequest(request);
-    String userId = jwtProvider.extractUsername(refreshToken);
+
+    String accessToken;
+    String newRefreshToken;
+
+    if (!jwtProvider.isRefreshTokenValid(refreshToken)) {
+      throw new CustomException(INVALID_JWT_TOKEN);
+    }
+
+    String userId = jwtProvider.extractUsername(refreshToken, true);
 
     CustomUserDetails userDetails =
         userRepository
@@ -115,13 +129,9 @@ public class AuthenticationService {
             .map(CustomUserDetails::new)
             .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-    if (!jwtProvider.validateToken(refreshToken)) {
-      throw new CustomException(INVALID_JWT_TOKEN);
-    }
+    accessToken = jwtProvider.generateAccessToken(userDetails);
+    newRefreshToken = jwtProvider.generateRefreshToken(userDetails);
 
-    String accessToken = jwtProvider.generateAccessToken(userDetails);
-    String newRefreshToken = jwtProvider.generateRefreshToken(userDetails);
-
-    return new RefreshTokenDto(accessToken, newRefreshToken);
+    return RefreshTokenDto.builder().accessToken(accessToken).refreshToken(newRefreshToken).build();
   }
 }

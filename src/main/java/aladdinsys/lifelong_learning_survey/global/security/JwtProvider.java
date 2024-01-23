@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,6 +29,8 @@ import org.springframework.util.StringUtils;
 @Service
 @Slf4j
 public class JwtProvider {
+
+  private static final String BEARER_TYPE = "Bearer ";
 
   @Value("${jwt.access-token.secret}")
   private String accessSecretKey;
@@ -48,17 +51,22 @@ public class JwtProvider {
   }
 
   public String extractUsername(String token) {
-    return extractClaim(token, Claims::getSubject);
+    return extractUsername(token, false);
   }
 
-  public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-    final Claims claims = extractAllClaims(token);
+  public String extractUsername(String token, boolean isRefreshToken) {
+    return extractClaim(token, Claims::getSubject, isRefreshToken);
+  }
+
+  public <T> T extractClaim(
+      String token, Function<Claims, T> claimsResolver, final boolean isRefreshToken) {
+    final Claims claims = extractAllClaims(token, isRefreshToken);
     return claimsResolver.apply(claims);
   }
 
-  private Claims extractAllClaims(String token) {
+  private Claims extractAllClaims(String token, final boolean isRefreshToken) {
     return Jwts.parserBuilder()
-        .setSigningKey(getSignInKey())
+        .setSigningKey(getSignInKey(isRefreshToken))
         .build()
         .parseClaimsJws(token)
         .getBody();
@@ -69,46 +77,59 @@ public class JwtProvider {
   }
 
   public String generateAccessToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-    return buildToken(extraClaims, userDetails, accessExpiration);
+    return buildToken(extraClaims, userDetails, accessExpiration, false);
   }
 
   public String generateRefreshToken(UserDetails userDetails) {
-    return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    return buildToken(new HashMap<>(), userDetails, refreshExpiration, true);
   }
 
   private String buildToken(
-      Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+      Map<String, Object> extraClaims,
+      UserDetails userDetails,
+      long expiration,
+      final boolean isRefreshToken) {
     return Jwts.builder()
         .setClaims(extraClaims)
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + expiration))
-        .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+        .signWith(getSignInKey(isRefreshToken), SignatureAlgorithm.HS256)
         .compact();
   }
 
-  public boolean validateToken(String token) {
+  public boolean isAccessTokenValid(String token) {
     try {
-      Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token);
+      Jwts.parserBuilder().setSigningKey(getSignInKey(false)).build().parseClaimsJws(token);
 
       return true;
     } catch (ExpiredJwtException e) {
-      log.error("Expired JWT token -> Message: {}", e.getMessage());
       throw new CustomException(EXPIRED_JWT_TOKEN);
     } catch (JwtException | IllegalArgumentException e) {
-      log.error("Invalid JWT token -> Message: {}", e.getMessage());
       throw new CustomException(INVALID_JWT_TOKEN);
     }
   }
 
-  private Key getSignInKey() {
-    byte[] keyBytes = Decoders.BASE64.decode(accessSecretKey);
+  public boolean isRefreshTokenValid(String token) {
+    try {
+      Jwts.parserBuilder().setSigningKey(getSignInKey(true)).build().parseClaimsJws(token);
+
+      return true;
+    } catch (ExpiredJwtException e) {
+      throw new CustomException(EXPIRED_JWT_TOKEN);
+    } catch (JwtException | IllegalArgumentException e) {
+      throw new CustomException(INVALID_JWT_TOKEN);
+    }
+  }
+
+  private Key getSignInKey(final boolean isRefreshToken) {
+    byte[] keyBytes = Decoders.BASE64.decode(isRefreshToken ? accessSecretKey : refreshSecretKey);
     return Keys.hmacShaKeyFor(keyBytes);
   }
 
   public String getJwtFromRequest(HttpServletRequest request) {
-    String bearerToken = request.getHeader("Authorization");
-    if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+    String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+    if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_TYPE)) {
       return bearerToken.substring(7);
     }
     throw new CustomException(INVALID_TOKEN_FORMAT);
