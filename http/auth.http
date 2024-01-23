@@ -1,0 +1,23 @@
+### Post Request
+# @no-cookie-jar
+POST {{domain}}:{{port}}/auth/sign-up
+Content-Type: application/json
+
+{
+  "userId": "test",
+  "password": "test123",
+  "name": "홍길동",
+  "code": "1234",
+  "email": "kaineus86@gmail.com"
+}
+
+### 로그인
+POST {{domain}}:{{port}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "userId": "test",
+  "password": "test123"
+}
+
+> {% client.global.set("access-token", response.body.result.accessToken);  %}
