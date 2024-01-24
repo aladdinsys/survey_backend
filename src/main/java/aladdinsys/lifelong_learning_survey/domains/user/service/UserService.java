@@ -12,7 +12,6 @@ import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -11,8 +11,6 @@ import aladdinsys.lifelong_learning_survey.domains.auth.service.AuthenticationSe
 import aladdinsys.lifelong_learning_survey.global.response.DataResponseBody;
 import aladdinsys.lifelong_learning_survey.global.response.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,8 +37,7 @@ public class AuthenticationController {
   }
 
   @PostMapping(value = "/refresh-token")
-  public DataResponseBody<RefreshTokenDto> refreshToken(
-      HttpServletRequest request, HttpServletResponse response) throws IOException {
-    return DataResponseBody.of(authenticationService.refreshToken(request, response));
+  public DataResponseBody<RefreshTokenDto> refreshToken(HttpServletRequest request) {
+    return DataResponseBody.of(authenticationService.refreshToken(request));
   }
 }
