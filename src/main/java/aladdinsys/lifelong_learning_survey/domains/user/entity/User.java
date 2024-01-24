@@ -46,12 +46,7 @@ public class User {
 
   @Column(name = "role")
   @Enumerated(EnumType.STRING)
-  private Role role;
-
-  @PrePersist
-  public void prePersist() {
-    this.role = Role.USER;
-  }
+  private Role role = Role.USER;
 
   public void changePassword(final String newPassword) {
     this.password = newPassword;
