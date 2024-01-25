@@ -2,5 +2,7 @@
 package aladdinsys.lifelong_learning_survey.domains.user.dto;
 
 import aladdinsys.lifelong_learning_survey.domains.user.constant.Role;
+import lombok.Builder;
 
-public record UserResponseDto(String userId, String name, String email, String code, Role role) {}
+@Builder
+public record ResponseDto(String userId, String name, String email, String code, Role role) {}

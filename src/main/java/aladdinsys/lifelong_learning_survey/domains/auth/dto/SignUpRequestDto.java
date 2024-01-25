@@ -4,7 +4,9 @@ package aladdinsys.lifelong_learning_survey.domains.auth.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public record SignUpRequestDto(
     @NotNull(message = "사용자 ID는 필수 입니다.")
         @NotBlank(message = "사용자 ID는 공백이 될 수 없습니다.")

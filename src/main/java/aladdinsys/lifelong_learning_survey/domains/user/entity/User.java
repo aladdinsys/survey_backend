@@ -9,7 +9,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -46,10 +45,15 @@ public class User {
 
   @Column(name = "role")
   @Enumerated(EnumType.STRING)
-  private Role role;
+  private Role role = Role.USER;
 
-  @PrePersist
-  public void prePersist() {
-    this.role = Role.USER;
+  public void changePassword(final String newPassword) {
+    this.password = newPassword;
+  }
+
+  public void updateInfo(final String name, final String code, final String email) {
+    this.name = name;
+    this.code = code;
+    this.email = email;
   }
 }

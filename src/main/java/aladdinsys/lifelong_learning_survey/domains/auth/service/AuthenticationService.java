@@ -7,14 +7,13 @@ import aladdinsys.lifelong_learning_survey.domains.auth.dto.RefreshTokenDto;
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignInRequestDto;
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignInResponseDto;
 import aladdinsys.lifelong_learning_survey.domains.auth.dto.SignUpRequestDto;
+import aladdinsys.lifelong_learning_survey.domains.user.constant.Role;
 import aladdinsys.lifelong_learning_survey.domains.user.entity.User;
 import aladdinsys.lifelong_learning_survey.domains.user.repository.UserRepository;
 import aladdinsys.lifelong_learning_survey.global.exception.CustomException;
 import aladdinsys.lifelong_learning_survey.global.security.CustomUserDetails;
 import aladdinsys.lifelong_learning_survey.global.security.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +35,21 @@ public class AuthenticationService {
   private final JwtProvider jwtProvider;
 
   private final AuthenticationManager authenticationManager;
+
+  @Transactional
+  public void signUpAdmin(final SignUpRequestDto signUpRequestDto) {
+    var user =
+        User.builder()
+            .userId(signUpRequestDto.userId())
+            .password(passwordEncoder.encode(signUpRequestDto.password()))
+            .name(signUpRequestDto.name())
+            .code(signUpRequestDto.code())
+            .email(signUpRequestDto.email())
+            .role(Role.ADMIN)
+            .build();
+
+    userRepository.save(user);
+  }
 
   @Transactional
   public void signUp(final SignUpRequestDto signUpRequestDto) {
@@ -106,8 +120,7 @@ public class AuthenticationService {
         .build();
   }
 
-  public RefreshTokenDto refreshToken(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+  public RefreshTokenDto refreshToken(HttpServletRequest request) {
 
     String refreshToken = jwtProvider.getJwtFromRequest(request);
 
