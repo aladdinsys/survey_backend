@@ -53,11 +53,12 @@ public class SurveyController {
     service.update(id, request);
     return ResponseBody.of(SUCCESS_PATCH);
   }
-@PatchMapping(value = "/{id}", produces = "application/json")
-public ResponseBody publish(@PathVariable Long id, Principal principal) {
-	service.publish(id, principal);
-	return ResponseBody.of(SUCCESS_PATCH);
-}
+
+  @PatchMapping(value = "/{id}", produces = "application/json")
+  public ResponseBody publish(@PathVariable Long id, Principal principal) {
+    service.publish(id, principal);
+    return ResponseBody.of(SUCCESS_PATCH);
+  }
 
   @DeleteMapping(value = "/{id}", produces = "application/json")
   public ResponseBody delete(@PathVariable Long id) {

@@ -20,7 +20,7 @@ public enum ErrorCode implements Code {
 
   EXPIRED_JWT_TOKEN(UNAUTHORIZED, "JWT 토큰이 만료되었습니다."),
 
-  NOT_FOUND_USER(BAD_REQUEST,  "해당 회원이 존재하지 않습니다."),
+  NOT_FOUND_USER(BAD_REQUEST, "해당 회원이 존재하지 않습니다."),
   NOT_FOUND_SURVEY(BAD_REQUEST, "해당 설문이 존재하지 않습니다."),
 
   NOT_AUTHORIZED(UNAUTHORIZED, "권한이 없습니다.");

@@ -51,7 +51,7 @@ public class SurveyService {
     Survey survey =
         repository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
 
-    if(!survey.getOwner().equals(principal.getName())) {
+    if (!survey.getOwner().equals(principal.getName())) {
       throw new CustomException(NOT_AUTHORIZED);
     }
 
