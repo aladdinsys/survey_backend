@@ -3,7 +3,6 @@ package aladdinsys.aladdin_survey.global.config;
 
 import static aladdinsys.aladdin_survey.global.constant.ErrorCode.*;
 
-import aladdinsys.aladdin_survey.domains.user.entity.User;
 import aladdinsys.aladdin_survey.domains.user.repository.UserRepository;
 import aladdinsys.aladdin_survey.global.auditing.ApplicationAuditAware;
 import aladdinsys.aladdin_survey.global.exception.CustomException;

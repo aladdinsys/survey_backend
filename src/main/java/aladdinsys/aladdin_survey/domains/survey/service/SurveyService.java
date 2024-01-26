@@ -1,92 +1,111 @@
+/* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.domains.survey.service;
 
-import java.security.Principal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
+import static aladdinsys.aladdin_survey.global.constant.ErrorCode.*;
 
 import aladdinsys.aladdin_survey.domains.survey.dto.SurveyRequest;
 import aladdinsys.aladdin_survey.domains.survey.dto.SurveyResponse;
 import aladdinsys.aladdin_survey.domains.survey.entity.Survey;
 import aladdinsys.aladdin_survey.domains.survey.repository.SurveyRepository;
+import aladdinsys.aladdin_survey.global.exception.CustomException;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class SurveyService {
 
-	private final SurveyRepository repository;
+  private final SurveyRepository repository;
 
+  @Transactional
+  public void save(final SurveyRequest request, Principal principal) {
 
-	public void save(final SurveyRequest request, Principal principal) {
+    Survey survey =
+        Survey.builder()
+            .title(request.title())
+            .description(request.description())
+            .content(request.content())
+            .owner(principal.getName())
+            .build();
 
-		var survey = Survey.builder()
-			.title(request.title())
-			.description(request.description())
-			.content(request.content())
-			.owner(principal.getName())
-			.build();
+    repository.save(survey);
+  }
 
-		repository.save(survey);
-		// TODO Auto-generated method stub
+  @Transactional
+  public void update(final Long id, final SurveyRequest request) {
 
-	}
+    Survey survey =
+        repository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
 
-	public void update(final Long id, final SurveyRequest request) {
-		// TODO Auto-generated method stub
+    survey.update(request.title(), request.description(), request.content());
+  }
 
-	}
+  @Transactional
+  public void publish(final Long id, final Principal principal) {
 
-	public void publish() {
-		// TODO Auto-generated method stub
+    Survey survey =
+        repository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
 
-	}
+    if(!survey.getOwner().equals(principal.getName())) {
+      throw new CustomException(NOT_AUTHORIZED);
+    }
 
-	public void delete(final Long id) {
-		// TODO Auto-generated method stub
+    survey.publish();
+  }
 
-	}
+  @Transactional
+  public void delete(final Long id) {
+    Survey survey =
+        repository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
+    repository.delete(survey);
+  }
 
-	public List<SurveyResponse> findAll() {
-		// TODO Auto-generated method stub
+  @Transactional(readOnly = true)
+  public List<SurveyResponse> findAll() {
+    List<Survey> surveys = repository.findAll();
+    return surveys.stream().map(this::toResponseDTO).toList();
+  }
 
-		return null;
-	}
+  @Transactional(readOnly = true)
+  public SurveyResponse findById(final Long id) {
+    Survey survey =
+        repository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
+    return this.toResponseDTO(survey);
+  }
 
-	public SurveyResponse findById(final Long id) {
-		// TODO Auto-generated method stub
+  @Transactional(readOnly = true)
+  public List<SurveyResponse> findOwn(Principal principal) {
 
-		return SurveyResponse.builder().build();
-	}
+    String userId = principal.getName();
+    List<Survey> surveys = repository.findByOwner(userId);
 
-	public List<SurveyResponse> findOwn(Principal principal) {
+    return surveys.stream().map(this::toResponseDTO).toList();
+  }
 
-		String userId = principal.getName();
+  private SurveyResponse toResponseDTO(Survey survey) {
+    return SurveyResponse.builder()
+        .id(survey.getId())
+        .title(survey.getTitle())
+        .description(survey.getDescription())
+        .content(survey.getContent())
+        .owner(survey.getOwner())
+        .createdAt(getDateTimeString(survey.getCreatedAt()))
+        .updatedAt(getDateTimeString(survey.getUpdatedAt()))
+        .publishedAt(getDateTimeString(survey.getPublishedAt()))
+        .build();
+  }
 
-		List<Survey> surveys = repository.findByOwner(userId);
+  private String getDateTimeString(LocalDateTime dateTime) {
 
-		return surveys.stream().map(
-			survey -> SurveyResponse.builder()
-				.id(survey.getId())
-				.title(survey.getTitle())
-				.description(survey.getDescription())
-				.content(survey.getContent())
-				.owner(survey.getOwner())
-				.createdAt(getDateTimeString(survey.getCreatedAt()))
-				.updatedAt(getDateTimeString(survey.getUpdatedAt()))
-				.publishedAt(getDateTimeString(survey.getPublishedAt()))
-				.build()
-		).toList();
-	}
+    if (dateTime == null) {
+      return "";
+    }
 
-	private String getDateTimeString(LocalDateTime dateTime) {
-
-		if(dateTime == null) {
-			return "";
-		}
-
-		return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-	}
+    return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+  }
 }
