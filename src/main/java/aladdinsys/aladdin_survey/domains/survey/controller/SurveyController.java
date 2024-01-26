@@ -47,9 +47,10 @@ public class SurveyController {
 
 	@PostMapping(produces = "application/json")
 	public ResponseBody post(
-		@RequestBody SurveyRequest request
+		@RequestBody SurveyRequest request,
+		Principal principal
 	) {
-		service.save(request);
+		service.save(request, principal);
 		return ResponseBody.of(SUCCESS_CREATE);
 	}
 	@PatchMapping(value="/{id}", produces = "application/json")

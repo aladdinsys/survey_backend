@@ -1,0 +1,25 @@
+### 사용자 전체 정보
+@access-token = client.global.get("access-token")
+
+### 설문조사 전체 정보
+GET {{domain}}:{{port}}/api/surveys
+Authorization: Bearer {{access-token}}
+
+### 설문조사 정보 (설문조사 ID)
+GET {{domain}}:{{port}}/api/surveys/1
+Authorization: Bearer {{access-token}}
+
+### 내 설문조사 정보
+GET {{domain}}:{{port}}/api/surveys/find-own
+Authorization: Bearer {{access-token}}
+
+### 설문조사 입력
+POST {{domain}}:{{port}}/api/surveys
+Content-Type: application/json
+Authorization: Bearer {{access-token}}
+
+{
+  "title": "설문조사 테스트",
+  "description": "설문조사 설명",
+  "content": "{\"sections\":[{\"section_name\":\"General Knowledge\",\"next_section\":\"Science\",\"questions\":[{\"question_text\":\"What is the capital of France?\",\"answers\":[\"Paris\",\"London\",\"Berlin\"]},{\"question_text\":\"Who wrote Romeo and Juliet?\",\"answers\":[\"William Shakespeare\",\"Jane Austen\",\"Charles Dickens\"]}]},{\"section_name\":\"Science\",\"questions\":[{\"question_text\":\"What is the largest mammal on Earth?\",\"answers\":[\"Blue Whale\",\"Elephant\",\"Giraffe\"]}]}]}"
+}

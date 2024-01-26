@@ -1,12 +1,15 @@
 package aladdinsys.aladdin_survey.domains.survey.service;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import aladdinsys.aladdin_survey.domains.survey.dto.SurveyRequest;
 import aladdinsys.aladdin_survey.domains.survey.dto.SurveyResponse;
+import aladdinsys.aladdin_survey.domains.survey.entity.Survey;
 import aladdinsys.aladdin_survey.domains.survey.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -14,9 +17,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SurveyService {
 
-	private final SurveyRepository surveyRepository;
+	private final SurveyRepository repository;
 
-	public void save(final SurveyRequest request) {
+
+	public void save(final SurveyRequest request, Principal principal) {
+
+		var survey = Survey.builder()
+			.title(request.title())
+			.description(request.description())
+			.content(request.content())
+			.owner(principal.getName())
+			.build();
+
+		repository.save(survey);
 		// TODO Auto-generated method stub
 
 	}
@@ -49,8 +62,31 @@ public class SurveyService {
 	}
 
 	public List<SurveyResponse> findOwn(Principal principal) {
-		// TODO Auto-generated method stub
 
-		return null;
+		String userId = principal.getName();
+
+		List<Survey> surveys = repository.findByOwner(userId);
+
+		return surveys.stream().map(
+			survey -> SurveyResponse.builder()
+				.id(survey.getId())
+				.title(survey.getTitle())
+				.description(survey.getDescription())
+				.content(survey.getContent())
+				.owner(survey.getOwner())
+				.createdAt(getDateTimeString(survey.getCreatedAt()))
+				.updatedAt(getDateTimeString(survey.getUpdatedAt()))
+				.publishedAt(getDateTimeString(survey.getPublishedAt()))
+				.build()
+		).toList();
+	}
+
+	private String getDateTimeString(LocalDateTime dateTime) {
+
+		if(dateTime == null) {
+			return "";
+		}
+
+		return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 	}
 }
