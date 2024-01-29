@@ -1,8 +1,6 @@
 /* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.domains.user.entity;
 
-import java.util.Objects;
-
 import aladdinsys.aladdin_survey.domains.user.constant.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,7 +46,13 @@ public class User {
   private Role role;
 
   @Builder
-  public User(final String userId, final String password, final String name, final String code, final String email, final Role role) {
+  public User(
+      final String userId,
+      final String password,
+      final String name,
+      final String code,
+      final String email,
+      final Role role) {
     this.userId = userId;
     this.password = password;
     this.name = name;
