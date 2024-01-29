@@ -23,7 +23,9 @@ public enum ErrorCode implements Code {
   NOT_FOUND_USER(BAD_REQUEST, "해당 회원이 존재하지 않습니다."),
   NOT_FOUND_SURVEY(BAD_REQUEST, "해당 설문이 존재하지 않습니다."),
 
-  NOT_AUTHORIZED(UNAUTHORIZED, "권한이 없습니다.");
+  NOT_AUTHORIZED(UNAUTHORIZED, "권한이 없습니다."),
+
+  NOT_ACCEPTABLE_SURVEY(NOT_ACCEPTABLE, "게시된 설문은 수정/삭제할 수 없습니다.");
 
   private final HttpStatus httpStatus;
   private final String message;

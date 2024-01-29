@@ -1,6 +1,9 @@
 /* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.domains.survey.entity;
 
+import static aladdinsys.aladdin_survey.global.constant.ErrorCode.*;
+
+import aladdinsys.aladdin_survey.global.exception.CustomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -18,6 +21,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Getter
@@ -59,18 +63,32 @@ public class Survey {
     this.owner = owner;
   }
 
-  public void update(final String title, final String description, final String content) {
+  public void update(String title, String description, String content) {
 
     if (publishedAt != null) {
-      throw new IllegalStateException("이미 게시된 설문입니다.");
+      throw new CustomException(NOT_ACCEPTABLE_SURVEY);
     }
 
-    this.title = title;
-    this.description = description;
-    this.content = content;
+    if(StringUtils.hasLength(title)) {
+		this.title = title;
+	}
+
+    if(StringUtils.hasLength(description)) {
+		this.description = description;
+	}
+
+    if(StringUtils.hasLength(content)) {
+		this.content = content;
+	}
+
   }
 
   public void publish() {
+
+    if (publishedAt != null) {
+      throw new CustomException(NOT_ACCEPTABLE_SURVEY);
+    }
+
     this.publishedAt = LocalDateTime.now();
   }
 }

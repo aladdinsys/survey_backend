@@ -37,10 +37,14 @@ public class SurveyService {
   }
 
   @Transactional
-  public void update(final Long id, final SurveyRequest request) {
+  public void update(final Long id, final SurveyRequest request, final Principal principal) {
 
     Survey survey =
         repository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
+
+    if (!survey.getOwner().equals(principal.getName())) {
+      throw new CustomException(NOT_AUTHORIZED);
+    }
 
     survey.update(request.title(), request.description(), request.content());
   }
@@ -59,9 +63,15 @@ public class SurveyService {
   }
 
   @Transactional
-  public void delete(final Long id) {
+  public void delete(final Long id, final Principal principal) {
+
     Survey survey =
         repository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
+
+    if (!survey.getOwner().equals(principal.getName())) {
+      throw new CustomException(NOT_AUTHORIZED);
+    }
+
     repository.delete(survey);
   }
 
@@ -72,14 +82,19 @@ public class SurveyService {
   }
 
   @Transactional(readOnly = true)
-  public SurveyResponse findById(final Long id) {
+  public SurveyResponse findById(final Long id, final Principal principal) {
     Survey survey =
         repository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
+
+    if (!survey.getOwner().equals(principal.getName())) {
+      throw new CustomException(NOT_AUTHORIZED);
+    }
+
     return this.toResponseDTO(survey);
   }
 
   @Transactional(readOnly = true)
-  public List<SurveyResponse> findOwn(Principal principal) {
+  public List<SurveyResponse> findOwn(final Principal principal) {
 
     String userId = principal.getName();
     List<Survey> surveys = repository.findByOwner(userId);

@@ -37,9 +37,9 @@ public class SurveyController {
     return DataResponseBody.of(service.findAll());
   }
 
-  @GetMapping(value = "/{id}", produces = "application/json")
-  public DataResponseBody<SurveyResponse> getFindById(@PathVariable Long id) {
-    return DataResponseBody.of(service.findById(id));
+  @GetMapping(value = "/{id}")
+  public DataResponseBody<SurveyResponse> getFindById(@PathVariable Long id, Principal principal) {
+    return DataResponseBody.of(service.findById(id, principal));
   }
 
   @PostMapping(produces = "application/json")
@@ -49,20 +49,21 @@ public class SurveyController {
   }
 
   @PatchMapping(value = "/{id}", produces = "application/json")
-  public ResponseBody patch(@PathVariable Long id, @RequestBody SurveyRequest request) {
-    service.update(id, request);
+  public ResponseBody patch(
+      @PathVariable Long id, @RequestBody SurveyRequest request, Principal principal) {
+    service.update(id, request, principal);
     return ResponseBody.of(SUCCESS_PATCH);
   }
 
-  @PatchMapping(value = "/{id}", produces = "application/json")
+  @PatchMapping(value = "/{id}/publish", produces = "application/json")
   public ResponseBody publish(@PathVariable Long id, Principal principal) {
     service.publish(id, principal);
     return ResponseBody.of(SUCCESS_PATCH);
   }
 
   @DeleteMapping(value = "/{id}", produces = "application/json")
-  public ResponseBody delete(@PathVariable Long id) {
-    service.delete(id);
+  public ResponseBody delete(@PathVariable Long id, Principal principal) {
+    service.delete(id, principal);
     return ResponseBody.of(SUCCESS_DELETE);
   }
 }
