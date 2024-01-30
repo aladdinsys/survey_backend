@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}" lang="ko">
+
+<th:block layout:fragment="css">
+        <link rel="stylesheet" href="/static/style/aladdin-survey.umd.css" />
+</th:block>
+<th:block layout:fragment="script">
+        <script src="/static/js/libs/aladdin-survey.iife.js"></script>
+</th:block>
+
+<!-- Content -->
+<div layout:fragment="content" >
+    <survey> </survey>
+    <script>
+        (() => {
+
+            // 초기화 및 마운트를 위한 코드
+            const targetElement = document.querySelector('survey');
+            const app = new AladdinSurvey({
+                target: targetElement,
+                props: {
+                    "message": "테스트2"
+                }
+            });
+
+            app.apiTest("가나다라마사");
+
+        })();
+    </script>
+</div>
+</html>

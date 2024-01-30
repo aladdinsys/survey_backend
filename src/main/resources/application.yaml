@@ -3,6 +3,11 @@ spring:
 #  config:
 #    activate:
 #      on-profile: local
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    check-template-location: true
   devtools:
     livereload:
       enabled: true
