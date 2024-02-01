@@ -56,9 +56,8 @@ public class SurveyController {
   }
 
   @PatchMapping(value = "/{id}/publish", produces = "application/json")
-  public ResponseBody publish(@PathVariable Long id, Principal principal) {
-    service.publish(id, principal);
-    return ResponseBody.of(SUCCESS_PATCH);
+  public DataResponseBody<SurveyResponse> publish(@PathVariable Long id, Principal principal) {
+    return DataResponseBody.of(service.publish(id, principal));
   }
 
   @DeleteMapping(value = "/{id}", produces = "application/json")

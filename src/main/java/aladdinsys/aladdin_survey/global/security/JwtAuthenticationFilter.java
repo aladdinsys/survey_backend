@@ -83,10 +83,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private boolean extracted(HttpServletRequest request) {
     var path = request.getRequestURI();
     return !path.matches("^/favicon.*")
+        && !path.matches("^/libs.*")
+        && !path.matches("^/js.*")
+        && !path.matches("^/style.*")
+        && !path.matches("^/view.*")
         && !path.matches("^/auth/.*")
-        && !path.matches("^/error.*")
-        && !path.matches("^/static.*")
-        && !path.matches("^/contents.*");
+        && !path.matches("^/error.*");
 
   }
 }

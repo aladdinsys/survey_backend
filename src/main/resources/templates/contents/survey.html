@@ -5,30 +5,23 @@
       layout:decorate="~{layouts/default_layout}" lang="ko">
 
 <th:block layout:fragment="css">
-        <link rel="stylesheet" href="/static/style/aladdin-survey.umd.css" />
-</th:block>
-<th:block layout:fragment="script">
-        <script src="/static/js/libs/aladdin-survey.iife.js"></script>
+    <link rel="stylesheet" href="/style/common/reset.css" />
+    <link rel="stylesheet" href="/libs/aladdin-survey/aladdin-survey.css" />
+    <link rel="stylesheet" href="/style/contents/survey.css" />
 </th:block>
 
 <!-- Content -->
 <div layout:fragment="content" >
-    <survey> </survey>
-    <script>
-        (() => {
+    <div class="content-wrapper">
+        <survey></survey>
+        <div class="function_buttons-wrapper">
+            <button id="btnPublish" > 보내기 </button>
+        </div>
+    </div>
 
-            // 초기화 및 마운트를 위한 코드
-            const targetElement = document.querySelector('survey');
-            const app = new AladdinSurvey({
-                target: targetElement,
-                props: {
-                    "message": "테스트2"
-                }
-            });
-
-            app.apiTest("가나다라마사");
-
-        })();
-    </script>
+    <th:block layout:fragment="script">
+        <script src="/libs/aladdin-survey/aladdin-survey.iife.js"></script>
+        <script src="/js/contents/survey.js"></script>
+    </th:block>
 </div>
 </html>

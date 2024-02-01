@@ -50,7 +50,7 @@ public class SurveyService {
   }
 
   @Transactional
-  public void publish(final Long id, final Principal principal) {
+  public SurveyResponse publish(final Long id, final Principal principal) {
 
     Survey survey =
         repository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
@@ -60,6 +60,8 @@ public class SurveyService {
     }
 
     survey.publish();
+
+    return this.toResponseDTO(survey);
   }
 
   @Transactional
@@ -108,6 +110,7 @@ public class SurveyService {
         .title(survey.getTitle())
         .description(survey.getDescription())
         .content(survey.getContent())
+        .publishId(survey.getPublishId())
         .owner(survey.getOwner())
         .createdAt(getDateTimeString(survey.getCreatedAt()))
         .updatedAt(getDateTimeString(survey.getUpdatedAt()))

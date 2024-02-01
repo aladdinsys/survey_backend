@@ -9,7 +9,9 @@ public record SurveyResponse(
     String title,
     String description,
     String content,
+	String publishId,
     String owner,
     String createdAt,
     String updatedAt,
-    String publishedAt) {}
+    String publishedAt
+) {}
