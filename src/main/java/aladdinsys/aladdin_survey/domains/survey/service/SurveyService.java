@@ -23,7 +23,7 @@ public class SurveyService {
   private final SurveyRepository repository;
 
   @Transactional
-  public void save(final SurveyRequest request, Principal principal) {
+  public SurveyResponse save(final SurveyRequest request, Principal principal) {
 
     Survey survey =
         Survey.builder()
@@ -33,7 +33,9 @@ public class SurveyService {
             .owner(principal.getName())
             .build();
 
-    repository.save(survey);
+    var saved = repository.save(survey);
+
+    return this.toResponseDTO(saved);
   }
 
   @Transactional
@@ -62,6 +64,23 @@ public class SurveyService {
     survey.publish();
 
     return this.toResponseDTO(survey);
+  }
+
+  @Transactional
+  public SurveyResponse publish(final SurveyRequest request, final Principal principal) {
+
+        Survey survey =
+            Survey.builder()
+                .title(request.title())
+                .description(request.description())
+                .content(request.content())
+                .owner(principal.getName())
+                .build();
+
+        survey.publish();
+        var savedSurvey = repository.save(survey);
+
+        return this.toResponseDTO(savedSurvey);
   }
 
   @Transactional

@@ -88,6 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         && !path.matches("^/style.*")
         && !path.matches("^/view.*")
         && !path.matches("^/auth/.*")
+        && !path.matches("^/open-api.*")
         && !path.matches("^/error.*");
 
   }

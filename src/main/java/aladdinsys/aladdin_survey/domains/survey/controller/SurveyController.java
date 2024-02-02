@@ -38,30 +38,37 @@ public class SurveyController {
   }
 
   @GetMapping(value = "/{id}")
-  public DataResponseBody<SurveyResponse> getFindById(@PathVariable Long id, Principal principal) {
+  public DataResponseBody<SurveyResponse> getFindById(@PathVariable("id") Long id, Principal principal) {
     return DataResponseBody.of(service.findById(id, principal));
   }
 
   @PostMapping(produces = "application/json")
-  public ResponseBody post(@RequestBody SurveyRequest request, Principal principal) {
-    service.save(request, principal);
-    return ResponseBody.of(SUCCESS_CREATE);
+  public DataResponseBody<SurveyResponse> post(@RequestBody SurveyRequest request, Principal principal) {
+    return DataResponseBody.of(service.save(request, principal));
   }
 
   @PatchMapping(value = "/{id}", produces = "application/json")
   public ResponseBody patch(
-      @PathVariable Long id, @RequestBody SurveyRequest request, Principal principal) {
+      @PathVariable("id") Long id, @RequestBody SurveyRequest request, Principal principal) {
     service.update(id, request, principal);
     return ResponseBody.of(SUCCESS_PATCH);
   }
 
   @PatchMapping(value = "/{id}/publish", produces = "application/json")
-  public DataResponseBody<SurveyResponse> publish(@PathVariable Long id, Principal principal) {
+  public DataResponseBody<SurveyResponse> publish(@PathVariable("id") Long id, Principal principal) {
     return DataResponseBody.of(service.publish(id, principal));
   }
 
+  @PatchMapping(value = "/publish", produces = "application/json")
+  public DataResponseBody<SurveyResponse> publish(
+      @RequestBody SurveyRequest request,
+      Principal principal)
+  {
+    return DataResponseBody.of(service.publish(request, principal));
+  }
+
   @DeleteMapping(value = "/{id}", produces = "application/json")
-  public ResponseBody delete(@PathVariable Long id, Principal principal) {
+  public ResponseBody delete(@PathVariable("id") Long id, Principal principal) {
     service.delete(id, principal);
     return ResponseBody.of(SUCCESS_DELETE);
   }
