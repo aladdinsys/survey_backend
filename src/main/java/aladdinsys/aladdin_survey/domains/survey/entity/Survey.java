@@ -46,7 +46,7 @@ public class Survey {
   @Column(name = "content")
   private String content;
 
-  @Column(name = "publish_id", length = 36)
+  @Column(name = "publish_id", length = 36, unique = true)
   private String publishId;
 
   @CreatedBy private String owner;

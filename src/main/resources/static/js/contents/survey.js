@@ -99,7 +99,7 @@ const setEventListener = () => {
     publishButton.addEventListener("click", (event) => {
 
         if(globalThis.aladdinSurvey.id) {
-            const { id } = globalThis.aladdinSurvey.id;
+            const { id } = globalThis.aladdinSurvey;
 
             surveyService.publishSurvey(id).then((res) => {
                 globalThis.aladdinSurvey.id = res.id;

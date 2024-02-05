@@ -7,14 +7,16 @@ HTML, BODY {
 .function_buttons-wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: flex-end;
     position: absolute;
-    width: 2rem;
-    height: 20rem;
-    top:0;
-    right:-3rem;
+    width: 10rem;
+    height: 5rem;
+    padding: 2rem 1rem;
+    top:2rem;
+    right:-11rem;
+    border: 1px solid #666666;
     border-radius: 10px;
-    background-color: #ff0000;
 }
 
 #btnPublish {

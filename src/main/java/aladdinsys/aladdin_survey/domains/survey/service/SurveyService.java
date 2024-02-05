@@ -3,18 +3,20 @@ package aladdinsys.aladdin_survey.domains.survey.service;
 
 import static aladdinsys.aladdin_survey.global.constant.ErrorCode.*;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import aladdinsys.aladdin_survey.domains.survey.dto.SurveyRequest;
 import aladdinsys.aladdin_survey.domains.survey.dto.SurveyResponse;
 import aladdinsys.aladdin_survey.domains.survey.entity.Survey;
 import aladdinsys.aladdin_survey.domains.survey.repository.SurveyRepository;
 import aladdinsys.aladdin_survey.global.exception.CustomException;
-import java.security.Principal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -121,6 +123,13 @@ public class SurveyService {
     List<Survey> surveys = repository.findByOwner(userId);
 
     return surveys.stream().map(this::toResponseDTO).toList();
+  }
+
+  @Transactional(readOnly = true)
+  public SurveyResponse findByPublishId(final String publishId) {
+
+    Survey survey = repository.findSurveyByPublishId(publishId).orElseThrow(() -> new CustomException(NOT_FOUND_SURVEY));
+    return this.toResponseDTO(survey);
   }
 
   private SurveyResponse toResponseDTO(Survey survey) {
