@@ -89,14 +89,8 @@ public class Survey {
   }
 
   public void publish() {
-
-    if (publishedAt != null) {
-      throw new CustomException(NOT_ACCEPTABLE_SURVEY);
-    }
-
     UUID uuid = UUID.randomUUID();
     this.publishId = uuid.toString();
-
     this.publishedAt = LocalDateTime.now();
   }
 }
