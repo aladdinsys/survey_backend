@@ -38,17 +38,23 @@ public class AuthenticationService {
 
   @Transactional
   public void signUpAdmin(final SignUpRequestDto signUpRequestDto) {
-    var user =
-        User.builder()
-            .userId(signUpRequestDto.userId())
-            .password(passwordEncoder.encode(signUpRequestDto.password()))
-            .name(signUpRequestDto.name())
-            .code(signUpRequestDto.code())
-            .email(signUpRequestDto.email())
-            .role(Role.ADMIN)
-            .build();
 
-    userRepository.save(user);
+    var fetch = userRepository.findByUserId(signUpRequestDto.userId());
+    if(fetch.isEmpty()) {
+      var user =
+          User.builder()
+              .userId(signUpRequestDto.userId())
+              .password(passwordEncoder.encode(signUpRequestDto.password()))
+              .name(signUpRequestDto.name())
+              .code(signUpRequestDto.code())
+              .email(signUpRequestDto.email())
+              .role(Role.ADMIN)
+              .build();
+
+      userRepository.save(user);
+    }
+
+
   }
 
   @Transactional

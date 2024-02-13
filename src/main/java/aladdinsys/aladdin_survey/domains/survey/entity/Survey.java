@@ -70,9 +70,10 @@ public class Survey {
 
   public void update(String title, String description, String content) {
 
-    if (publishedAt != null) {
-      throw new CustomException(NOT_ACCEPTABLE_SURVEY);
-    }
+    // FIXME 나중에 배포 전에 수정 해야 함
+    // if (publishedAt != null) {
+    //   throw new CustomException(NOT_ACCEPTABLE_SURVEY);
+    // }
 
     if(StringUtils.hasLength(title)) {
 		this.title = title;

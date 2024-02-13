@@ -69,7 +69,7 @@ const surveyService = {
 
     findOwns: async () => {
         return surveyService.api.get(`/api/surveys/find-own`)
-            .then((res) => res.result.map(new SurveyResponse));
+            .then((res) => res.result.map((result) => new SurveyResponse(result)));
     },
 
     postSurvey: async (surveyRequest) => {
@@ -146,6 +146,32 @@ const setEventListener = () => {
                 globalThis.aladdinSurvey.id = res.id;
             });
         }
+    }, false);
+
+
+
+    const loadBtn = document.getElementById('btnLoad');
+    loadBtn.addEventListener("click", async (event) => {
+        const result = await surveyService.findOwns();
+
+        const {
+            id,
+            title,
+            content,
+            description
+        } = result[0];
+
+        const params = {
+            id,
+            title,
+            sections: JSON.parse(content),
+            description
+        }
+
+        globalThis.aladdinSurvey.setSurvey(JSON.stringify(params));
+        globalThis.aladdinSurvey.id = id;
+
+
     }, false);
 }
 
