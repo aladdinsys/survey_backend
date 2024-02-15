@@ -40,7 +40,7 @@ public class AuthenticationService {
   public void signUpAdmin(final SignUpRequestDto signUpRequestDto) {
 
     var fetch = userRepository.findByUserId(signUpRequestDto.userId());
-    if(fetch.isEmpty()) {
+    if (fetch.isEmpty()) {
       var user =
           User.builder()
               .userId(signUpRequestDto.userId())
@@ -53,8 +53,6 @@ public class AuthenticationService {
 
       userRepository.save(user);
     }
-
-
   }
 
   @Transactional

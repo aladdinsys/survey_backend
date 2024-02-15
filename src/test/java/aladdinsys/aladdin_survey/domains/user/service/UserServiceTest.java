@@ -48,7 +48,10 @@ class UserServiceTest {
 	@DisplayName("회원 정보 By ID 조회")
 	@Order(1)
 	void findById() {
-		ResponseDto result = userService.findById(2L);
+
+		Long id = userRepository.findAll().getFirst().getId();
+
+		ResponseDto result = userService.findById(id);
 
 		assertThat(result.name()).isEqualTo("홍길동");
 		assertThat(result.email()).isEqualTo("hongildong@aladdinsys.co.kr");
@@ -61,9 +64,9 @@ class UserServiceTest {
 	void findAll() {
 		List<ResponseDto> result = userService.findAll();
 
-		assertThat(result.size()).isEqualTo(3);
-		assertThat(result.get(1).name()).isEqualTo("홍길동");
-		assertThat(result.get(2).name()).isEqualTo("고경남");
+		assertThat(result.size()).isEqualTo(2);
+		assertThat(result.get(0).name()).isEqualTo("홍길동");
+		assertThat(result.get(1).name()).isEqualTo("고경남");
 	}
 
 	@Test
@@ -72,11 +75,14 @@ class UserServiceTest {
 	void patch() {
 
 		var dto = new PatchDto("홍길동",  "hong@aladdin.co.kr", "00000");
-		userService.patch(6L, dto);
+		Long id = userRepository.findAll().getFirst().getId();
+
+
+		userService.patch(id, dto);
 
 		em.flush();
 
-		userRepository.findById(6L).ifPresentOrElse(
+		userRepository.findById(id).ifPresentOrElse(
 				user -> {
 					assertThat(user.getName()).isEqualTo("홍길동");
 					assertThat(user.getEmail()).isEqualTo("hong@aladdin.co.kr");
@@ -90,15 +96,16 @@ class UserServiceTest {
 	@DisplayName("회원 비밀번호 수정")
 	@Order(4)
 	void changePassword() {
+		Long id = userRepository.findAll().getFirst().getId();
 
-		userRepository.findById(8L).ifPresentOrElse(
+		userRepository.findById(id).ifPresentOrElse(
 				user -> user.changePassword("testPassword"),
 				() -> fail("회원 비밀번호 수정 실패")
 		);
 
 		em.flush();
 
-		userRepository.findById(8L).ifPresentOrElse(
+		userRepository.findById(id).ifPresentOrElse(
 			user -> assertThat(user.getPassword()).isEqualTo("testPassword"),
 			() -> fail("회원 비밀번호 수정 실패")
 		);
@@ -108,10 +115,12 @@ class UserServiceTest {
 	@DisplayName("회원 삭제")
 	@Order(5)
 	void delete() {
-		userService.delete(10L);
+
+		Long id = userRepository.findAll().getFirst().getId();
+		userService.delete(id);
 
 		em.flush();
 
-		assertThat(userRepository.findById(10L).isEmpty()).isTrue();
+		assertThat(userRepository.findById(id).isEmpty()).isTrue();
 	}
 }

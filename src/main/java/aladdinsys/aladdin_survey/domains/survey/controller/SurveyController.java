@@ -38,12 +38,14 @@ public class SurveyController {
   }
 
   @GetMapping(value = "/{id}")
-  public DataResponseBody<SurveyResponse> getFindById(@PathVariable("id") Long id, Principal principal) {
+  public DataResponseBody<SurveyResponse> getFindById(
+      @PathVariable("id") Long id, Principal principal) {
     return DataResponseBody.of(service.findById(id, principal));
   }
 
   @PostMapping(produces = "application/json")
-  public DataResponseBody<SurveyResponse> post(@RequestBody SurveyRequest request, Principal principal) {
+  public DataResponseBody<SurveyResponse> post(
+      @RequestBody SurveyRequest request, Principal principal) {
     return DataResponseBody.of(service.save(request, principal));
   }
 
@@ -55,15 +57,14 @@ public class SurveyController {
   }
 
   @PatchMapping(value = "/{id}/publish", produces = "application/json")
-  public DataResponseBody<SurveyResponse> publish(@PathVariable("id") Long id, Principal principal) {
+  public DataResponseBody<SurveyResponse> publish(
+      @PathVariable("id") Long id, Principal principal) {
     return DataResponseBody.of(service.publish(id, principal));
   }
 
   @PatchMapping(value = "/publish", produces = "application/json")
   public DataResponseBody<SurveyResponse> publish(
-      @RequestBody SurveyRequest request,
-      Principal principal)
-  {
+      @RequestBody SurveyRequest request, Principal principal) {
     return DataResponseBody.of(service.publish(request, principal));
   }
 

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'aladdinsys'
-version = '0.0.1-SNAPSHOT'
+version = 'v0.1'
 
 java {
     sourceCompatibility = '21'
@@ -37,7 +37,10 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     compileOnly 'org.projectlombok:lombok'
+
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.postgresql:postgresql'
+
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

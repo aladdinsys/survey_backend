@@ -22,7 +22,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
@@ -90,6 +89,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         && !path.matches("^/auth/.*")
         && !path.matches("^/open-api.*")
         && !path.matches("^/error.*");
-
   }
 }

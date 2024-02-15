@@ -1,20 +1,15 @@
 /* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.domains.survey.entity;
 
-import static aladdinsys.aladdin_survey.global.constant.ErrorCode.*;
-
-import aladdinsys.aladdin_survey.global.exception.CustomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,8 +37,7 @@ public class Survey {
   @Column(name = "description", nullable = false, length = 100)
   private String description;
 
-  @Lob
-  @Column(name = "content")
+  @Column(columnDefinition = "TEXT", name = "content")
   private String content;
 
   @Column(name = "publish_id", length = 36, unique = true)
@@ -75,18 +69,17 @@ public class Survey {
     //   throw new CustomException(NOT_ACCEPTABLE_SURVEY);
     // }
 
-    if(StringUtils.hasLength(title)) {
-		this.title = title;
-	}
+    if (StringUtils.hasLength(title)) {
+      this.title = title;
+    }
 
-    if(StringUtils.hasLength(description)) {
-		this.description = description;
-	}
+    if (StringUtils.hasLength(description)) {
+      this.description = description;
+    }
 
-    if(StringUtils.hasLength(content)) {
-		this.content = content;
-	}
-
+    if (StringUtils.hasLength(content)) {
+      this.content = content;
+    }
   }
 
   public void publish() {
