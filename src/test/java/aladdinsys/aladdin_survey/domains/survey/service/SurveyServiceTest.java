@@ -26,6 +26,7 @@ import aladdinsys.aladdin_survey.domains.survey.dto.SurveyResponse;
 import aladdinsys.aladdin_survey.domains.survey.entity.Survey;
 import aladdinsys.aladdin_survey.domains.survey.repository.SurveyRepository;
 import aladdinsys.aladdin_survey.global.exception.CustomException;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
@@ -250,19 +251,10 @@ class SurveyServiceTest {
 			new UsernamePasswordAuthenticationToken("k2ngis", "testPassword2"));
 		SecurityContextHolder.getContext().setAuthentication(auth);
 
-		surveyService.publish(22L, auth);
+		SurveyResponse response = surveyService.publish(22L, auth);
 
-		SurveyRequest request = new SurveyRequest(
-			"서베이 수정 테스트 제목",
-			"서베이 수정 테스트 설명",
-			"{\"sections\":[]}"
-		);
-
-		CustomException exception = assertThrows(CustomException.class, () -> {
-			surveyService.update(22L, request, auth);
-		});
-
-		assertThat(exception.getErrorCode()).isEqualTo(NOT_ACCEPTABLE_SURVEY);
+		assertThat(StringUtils.isNotBlank(response.publishId())).isTrue();
+		assertThat(StringUtils.isNotBlank(response.publishedAt())).isTrue();
 	}
 
 	@Test

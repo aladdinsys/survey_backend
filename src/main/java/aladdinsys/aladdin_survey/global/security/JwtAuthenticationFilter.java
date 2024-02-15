@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
@@ -81,8 +82,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private boolean extracted(HttpServletRequest request) {
     var path = request.getRequestURI();
-    return !path.equals("/auth/sign-up")
-        && !path.equals("/auth/sign-in")
-        && !path.equals("/auth/refresh-token");
+    return !path.matches("^/favicon.*")
+        && !path.matches("^/libs.*")
+        && !path.matches("^/js.*")
+        && !path.matches("^/style.*")
+        && !path.matches("^/view.*")
+        && !path.matches("^/auth/.*")
+        && !path.matches("^/open-api.*")
+        && !path.matches("^/error.*");
+
   }
 }

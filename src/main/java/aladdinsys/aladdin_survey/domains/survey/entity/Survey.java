@@ -13,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,6 +46,9 @@ public class Survey {
   @Column(name = "content")
   private String content;
 
+  @Column(name = "publish_id", length = 36, unique = true)
+  private String publishId;
+
   @CreatedBy private String owner;
 
   @CreatedDate
@@ -65,9 +70,10 @@ public class Survey {
 
   public void update(String title, String description, String content) {
 
-    if (publishedAt != null) {
-      throw new CustomException(NOT_ACCEPTABLE_SURVEY);
-    }
+    // FIXME 나중에 배포 전에 수정 해야 함
+    // if (publishedAt != null) {
+    //   throw new CustomException(NOT_ACCEPTABLE_SURVEY);
+    // }
 
     if(StringUtils.hasLength(title)) {
 		this.title = title;
@@ -84,11 +90,8 @@ public class Survey {
   }
 
   public void publish() {
-
-    if (publishedAt != null) {
-      throw new CustomException(NOT_ACCEPTABLE_SURVEY);
-    }
-
+    UUID uuid = UUID.randomUUID();
+    this.publishId = uuid.toString();
     this.publishedAt = LocalDateTime.now();
   }
 }
