@@ -58,8 +58,8 @@ jobs:
           npm --help
           npx --help
           cd /home/user/survey/build/libs
-          npx kill-port ${{ secrets.PORT }} 
-          java -jar aladdin_survey-${{ secrets.VERSION }}.jar
+          npx kill-port ${{ secrets.PORT }}  
+          java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage
 
   dependency-submission:
 
