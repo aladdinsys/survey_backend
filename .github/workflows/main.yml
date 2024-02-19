@@ -45,21 +45,9 @@ jobs:
         source: "build/libs/*.jar"
         target: /home/user/survey
 
-    - name: SSH Command
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.SSH_PORT }}
-        script: |
-          export NVM_DIR=~/.nvm
-          source ~/.nvm/nvm.sh
-          npm --help
-          npx --help
-          cd /home/user/survey/build/libs
-          npx kill-port ${{ secrets.PORT }}  
-          java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage
+    - name: SSH into the server and run the application
+      run: |
+        ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} -p ${{ secrets.SSH_PORT }} "cd /home/user/survey/build/libs/ && npx kill-port 8090 && java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage"
 
   dependency-submission:
 
