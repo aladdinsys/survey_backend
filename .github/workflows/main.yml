@@ -41,13 +41,14 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         source: "build/libs/*.jar"
         target: /home/user/survey
-
-    - name: SSH into the server and run the application
-      run: |
-        ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }}:${{ secrets.SSH_PORT }} "cd /home/user/survey/build/libs/ && npx kill-port 8090 && java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage"
+        script: |
+          cd /home/user/survey
+          npx kill-port 8090
+          java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage
 
   dependency-submission:
 
