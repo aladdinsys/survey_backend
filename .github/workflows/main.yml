@@ -56,7 +56,8 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           cd /home/user/survey/build/libs/
-          nohup java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage &
+          npx kill-port 8090
+          nohup java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage > nohup.out 2> nohup.err < /dev/null &
 
   dependency-submission:
 
