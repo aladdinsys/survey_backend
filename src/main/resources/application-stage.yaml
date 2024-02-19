@@ -30,6 +30,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        temp:
+          use_jdbc_metadata_defaults: false
 
 jwt:
   access-token:
