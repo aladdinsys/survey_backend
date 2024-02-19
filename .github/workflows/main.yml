@@ -41,7 +41,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
+        port: ${{ secrets.SSH_PORT }}
         source: "build/libs/*.jar"
         target: /home/user/survey
 
@@ -51,12 +51,10 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
+        port: ${{ secrets.SSH_PORT }}
         script: |
-          export NVM_DIR=~/.nvm
-          source ~/.nvm/nvm.sh
-          cd /home/user/survey/
-          npx kill-port 8090 
+          cd /home/user/survey/build/libs
+          ~/opt/node/bin/npx kill-port ${{ secrets.PORT }} 
           java -jar aladdin_survey-${{ secrets.VERSION }}.jar
 
   dependency-submission:
