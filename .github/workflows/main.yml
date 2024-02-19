@@ -42,8 +42,8 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        source: "aladdin_survey-*.jar"
-        target: /home/user/survey/
+        source: "build/libs/*.jar"
+        target: /home/user/survey
 
     - name: SSH Command
       uses: appleboy/ssh-action@master
