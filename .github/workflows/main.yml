@@ -46,7 +46,7 @@ jobs:
         source: "build/libs/*.jar"
         target: /home/user/survey
         script: |
-          cd /home/user/survey
+          cd /home/user/survey/build/libs/
           npx kill-port 8090
           java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage
 
