@@ -42,7 +42,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        source: "build/libs/*.jar"
+        source: "aladdin_survey-*.jar"
         target: /home/user/survey/
 
     - name: SSH Command
@@ -53,7 +53,9 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          cd /home/user/survey/ 
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          cd /home/user/survey/
           npx kill-port 8090 
           java -jar aladdin_survey-${{ secrets.VERSION }}.jar
 
