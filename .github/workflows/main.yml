@@ -53,8 +53,12 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.SSH_PORT }}
         script: |
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
+          npm --help
+          npx --help
           cd /home/user/survey/build/libs
-          ~/opt/node/bin/npx kill-port ${{ secrets.PORT }} 
+          npx kill-port ${{ secrets.PORT }} 
           java -jar aladdin_survey-${{ secrets.VERSION }}.jar
 
   dependency-submission:
