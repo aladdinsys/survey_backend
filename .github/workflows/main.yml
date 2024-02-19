@@ -56,10 +56,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           cd /home/user/survey/build/libs/
-          export NVM_DIR=~/.nvm
-          source ~/.nvm/nvm.sh
-          npx kill-port 8090
-          java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage
+          nohup java -jar aladdin_survey-${{ secrets.VERSION }}.jar --spring.profiles.active=stage &
 
   dependency-submission:
 
