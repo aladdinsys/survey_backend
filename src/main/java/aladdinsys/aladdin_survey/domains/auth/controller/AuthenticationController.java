@@ -30,7 +30,7 @@ public class AuthenticationController {
     return ResponseBody.of(SUCCESS_CREATE);
   }
 
-  @PostMapping(value = "/sign-in", produces = "application/json", consumes = "application/json")
+  @PostMapping(value = "/sign-in", produces = "application/json")
   public DataResponseBody<SignInResponseDto> signIn(
       @RequestBody SignInRequestDto signInRequestDto) {
     return DataResponseBody.of(authenticationService.signIn(signInRequestDto));
