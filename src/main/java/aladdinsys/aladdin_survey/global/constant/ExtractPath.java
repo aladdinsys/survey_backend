@@ -1,20 +1,18 @@
+/* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.global.constant;
 
 import lombok.Getter;
 
 @Getter
 public enum ExtractPath {
+  OPEN_API("open-api"),
+  AUTHENTICATION("auth"),
+  ERROR("error"),
+  ;
 
-	OPEN_API("open-api"),
-	AUTHENTICATION("auth"),
-	ERROR("error"),
+  private final String path;
 
-	;
-
-	private final String path;
-
-	ExtractPath(String path) {
-		this.path = path;
-	}
-
+  ExtractPath(String path) {
+    this.path = path;
+  }
 }
