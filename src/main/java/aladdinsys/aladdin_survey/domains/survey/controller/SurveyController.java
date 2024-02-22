@@ -10,6 +10,8 @@ import aladdinsys.aladdin_survey.global.response.DataResponseBody;
 import aladdinsys.aladdin_survey.global.response.ResponseBody;
 import java.security.Principal;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/surveys")
+@Tag(name = "Survey", description = "Survey API")
 public class SurveyController {
 
   private final SurveyService service;
