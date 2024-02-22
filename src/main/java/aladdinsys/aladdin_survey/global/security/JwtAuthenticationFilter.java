@@ -3,6 +3,7 @@ package aladdinsys.aladdin_survey.global.security;
 
 import static aladdinsys.aladdin_survey.global.constant.ErrorCode.*;
 
+import aladdinsys.aladdin_survey.global.constant.ExtractPath;
 import aladdinsys.aladdin_survey.global.exception.CustomException;
 import aladdinsys.aladdin_survey.global.response.ErrorResponseBody;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,13 +82,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private boolean extracted(HttpServletRequest request) {
     var path = request.getRequestURI();
-    return !path.matches("^/favicon.*")
-        && !path.matches("^/libs.*")
-        && !path.matches("^/js.*")
-        && !path.matches("^/style.*")
-        && !path.matches("^/view.*")
-        && !path.matches("^/auth/.*")
-        && !path.matches("^/open-api.*")
-        && !path.matches("^/error.*");
+    ExtractPath[] values = ExtractPath.values();
+    for (ExtractPath value : values) {
+      if (path.matches("^/" + value.getPath() + ".*")) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
