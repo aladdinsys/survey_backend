@@ -9,9 +9,8 @@ import aladdinsys.aladdin_survey.domains.user.dto.ResponseDto;
 import aladdinsys.aladdin_survey.domains.user.service.UserService;
 import aladdinsys.aladdin_survey.global.response.DataResponseBody;
 import aladdinsys.aladdin_survey.global.response.ResponseBody;
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

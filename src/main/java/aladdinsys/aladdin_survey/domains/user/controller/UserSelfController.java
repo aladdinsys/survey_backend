@@ -4,9 +4,8 @@ package aladdinsys.aladdin_survey.domains.user.controller;
 import aladdinsys.aladdin_survey.domains.user.dto.ResponseDto;
 import aladdinsys.aladdin_survey.domains.user.service.UserService;
 import aladdinsys.aladdin_survey.global.response.DataResponseBody;
-import java.security.Principal;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

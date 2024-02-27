@@ -2,7 +2,6 @@
 package aladdinsys.aladdin_survey.global.config;
 
 import aladdinsys.aladdin_survey.global.security.JwtAuthenticationFilter;
-import aladdinsys.aladdin_survey.global.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,25 +18,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
+  private final JwtAuthenticationFilter jwtAuthFilter;
 
-    private final AuthenticationProvider authenticationProvider;
+  private final AuthenticationProvider authenticationProvider;
 
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.csrf(AbstractHttpConfigurer::disable)
+        .cors(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(
+                        "/auth/**",
+                        "/error",
+                        "/open-api/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-config/**")
+                    .permitAll())
+        .authorizeHttpRequests(auth -> auth.requestMatchers("/users/**").hasRole("ADMIN"))
+        .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+        .sessionManagement(
+            sessionManagement ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authenticationProvider(authenticationProvider)
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        auth -> auth.requestMatchers("/auth/**", "/error", "/open-api/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-config/**").permitAll())
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/users/**").hasRole("ADMIN"))
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .sessionManagement(
-                        sessionManagement ->
-                                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+    return http.build();
+  }
 }
