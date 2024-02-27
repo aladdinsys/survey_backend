@@ -27,7 +27,15 @@ public class SecurityConfig {
     http.csrf(AbstractHttpConfigurer::disable)
         .cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
-            auth -> auth.requestMatchers("/auth/**", "/error", "/open-api/**").permitAll())
+            auth ->
+                auth.requestMatchers(
+                        "/auth/**",
+                        "/error",
+                        "/open-api/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-config/**")
+                    .permitAll())
         .authorizeHttpRequests(auth -> auth.requestMatchers("/users/**").hasRole("ADMIN"))
         .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
         .sessionManagement(

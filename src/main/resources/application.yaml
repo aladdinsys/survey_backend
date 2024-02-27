@@ -5,3 +5,13 @@ spring:
       local: common, local
       stage: common, stage
       prod: common, prod
+  springdoc:
+    api-docs:
+      enabled: true
+    swagger-ui:
+      path: /swagger-ui/index.html
+      groups-order: DESC
+      doc-expansion: none
+      tags-sorter: alpha
+      operationsSorter: method
+      display-request-duration: true

@@ -9,6 +9,7 @@ import aladdinsys.aladdin_survey.domains.user.dto.ResponseDto;
 import aladdinsys.aladdin_survey.domains.user.service.UserService;
 import aladdinsys.aladdin_survey.global.response.DataResponseBody;
 import aladdinsys.aladdin_survey.global.response.ResponseBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Tag(name = "User", description = "User API")
 public class UserController {
 
   private final UserService service;
