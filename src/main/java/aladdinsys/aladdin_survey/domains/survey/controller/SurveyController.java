@@ -9,6 +9,7 @@ import aladdinsys.aladdin_survey.domains.survey.service.SurveyService;
 import aladdinsys.aladdin_survey.global.response.DataResponseBody;
 import aladdinsys.aladdin_survey.global.response.ResponseBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class SurveyController {
 
   @PostMapping(produces = "application/json")
   public DataResponseBody<SurveyResponse> post(
-      @RequestBody SurveyRequest request, Principal principal) {
+      @Valid @RequestBody SurveyRequest request, Principal principal) {
     return DataResponseBody.of(service.save(request, principal));
   }
 

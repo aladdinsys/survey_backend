@@ -47,8 +47,8 @@ public class SwaggerConfig {
     return createGroupedOpenApi("survey", "aladdinsys.aladdin_survey.domains.survey.controller");
   }
 
-  @Bean
-  public GroupedOpenApi userApi() {
-    return createGroupedOpenApi("user", "aladdinsys.aladdin_survey.domains.user.controller");
-  }
+  //  @Bean
+  //  public GroupedOpenApi userApi() {
+  //    return createGroupedOpenApi("user", "aladdinsys.aladdin_survey.domains.user.controller");
+  //  }
 }
