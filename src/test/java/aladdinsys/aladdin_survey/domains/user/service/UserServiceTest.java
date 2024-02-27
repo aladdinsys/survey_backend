@@ -24,7 +24,6 @@ import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @Transactional
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserServiceTest {
 
 	@Autowired
@@ -46,7 +45,6 @@ class UserServiceTest {
 
 	@Test
 	@DisplayName("회원 정보 By ID 조회")
-	@Order(1)
 	void findById() {
 
 		Long id = userRepository.findAll().getFirst().getId();
@@ -60,7 +58,6 @@ class UserServiceTest {
 
 	@Test
 	@DisplayName("회원 정보 전체 조회")
-	@Order(2)
 	void findAll() {
 		List<ResponseDto> result = userService.findAll();
 
@@ -71,7 +68,6 @@ class UserServiceTest {
 
 	@Test
 	@DisplayName("회원 정보 수정")
-	@Order(3)
 	void patch() {
 
 		var dto = new PatchDto("홍길동",  "hong@aladdin.co.kr", "00000");
@@ -94,7 +90,6 @@ class UserServiceTest {
 
 	@Test
 	@DisplayName("회원 비밀번호 수정")
-	@Order(4)
 	void changePassword() {
 		Long id = userRepository.findAll().getFirst().getId();
 
@@ -113,7 +108,6 @@ class UserServiceTest {
 
 	@Test
 	@DisplayName("회원 삭제")
-	@Order(5)
 	void delete() {
 
 		Long id = userRepository.findAll().getFirst().getId();

@@ -6,6 +6,8 @@ import aladdinsys.aladdin_survey.domains.auth.dto.SignUpRequestDto;
 import aladdinsys.aladdin_survey.domains.auth.service.AuthenticationService;
 import aladdinsys.aladdin_survey.domains.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class UserSelfControllerTest {
 
     @Autowired

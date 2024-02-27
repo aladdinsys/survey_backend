@@ -31,7 +31,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 class SurveyServiceTest {
 
@@ -94,25 +93,29 @@ class SurveyServiceTest {
 
 		repository.save(survey3);
 		repository.flush();
+
+		em.clear();
 	}
 
 
 	@Test
 	@DisplayName("설문 정보 By ID 조회")
-	@Order(1)
 	void findById() {
 
 		saveSurvey();
 
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		SurveyResponse response = surveyService.findById(3L, auth);
+		var id = repository.findByOwner("testId").getFirst().getId();
 
-		assertThat(response.title()).isEqualTo("서베이 제목3");
+		var auth = authenticationManager.authenticate(
+			new UsernamePasswordAuthenticationToken("testId", "testPassword"));
+
+		SurveyResponse response = surveyService.findById(id, auth);
+
+		assertThat(response.title()).isEqualTo("서베이 제목1");
 	}
 
 	@Test
 	@DisplayName("설문 정보 By ID 조회 실패 - 권한 없음")
-	@Order(2)
 	void findByIdFailure() {
 
 		saveSurvey();
@@ -121,9 +124,11 @@ class SurveyServiceTest {
 			new UsernamePasswordAuthenticationToken("k2ngis", "testPassword2"));
 		SecurityContextHolder.getContext().setAuthentication(auth);
 
+		var id = repository.findByOwner("testId").getFirst().getId();
+
 		final Authentication getAuth = SecurityContextHolder.getContext().getAuthentication();
 		CustomException exception = assertThrows(CustomException.class, () -> {
-			surveyService.findById(4L, getAuth);
+			surveyService.findById(id, getAuth);
 		});
 
 		assertThat(exception.getErrorCode()).isEqualTo(NOT_AUTHORIZED);
@@ -131,7 +136,6 @@ class SurveyServiceTest {
 
 	@Test
 	@DisplayName("내 설문 정보 조회")
-	@Order(3)
 	void findOwn() {
 
 		saveSurvey();
@@ -141,7 +145,6 @@ class SurveyServiceTest {
 		SecurityContextHolder.getContext().setAuthentication(auth);
 
 		auth = SecurityContextHolder.getContext().getAuthentication();
-
 		List<SurveyResponse> result = surveyService.findOwn(auth);
 
 		assertThat(result.size()).isEqualTo(2);
@@ -152,7 +155,6 @@ class SurveyServiceTest {
 
 	@Test
 	@DisplayName("전체 설문 정보 조회")
-	@Order(4)
 	void findAll() {
 
 		saveSurvey();
@@ -167,7 +169,6 @@ class SurveyServiceTest {
 
 	@Test
 	@DisplayName("설문 정보 저장")
-	@Order(5)
 	void save() {
 
 		var auth = authenticationManager.authenticate(
@@ -182,7 +183,8 @@ class SurveyServiceTest {
 
 		surveyService.save(request, auth);
 
-		Survey survey = repository.findById(13L).orElseThrow();
+		var id = repository.findByOwner("k2ngis").getFirst().getId();
+		Survey survey = repository.findById(id).orElseThrow();
 
 		assertThat(survey.getTitle()).isEqualTo("서베이 생성 테스트 제목");
 		assertThat(survey.getDescription()).isEqualTo("서베이 생성 테스트 설명");
@@ -191,7 +193,6 @@ class SurveyServiceTest {
 
 	@Test
 	@DisplayName("설문 정보 수정")
-	@Order(6)
 	void update() {
 
 		saveSurvey();
@@ -206,9 +207,10 @@ class SurveyServiceTest {
 			"{\"sections\":[]}"
 		);
 
-		surveyService.update(16L, request, auth);
+		var id = repository.findByOwner("k2ngis").getFirst().getId();
+		surveyService.update(id, request, auth);
 
-		SurveyResponse response = surveyService.findById(16L, auth);
+		SurveyResponse response = surveyService.findById(id, auth);
 
 		assertThat(response.title()).isEqualTo("서베이 수정 테스트 제목");
 		assertThat(response.description()).isEqualTo("서베이 수정 테스트 설명");
@@ -217,7 +219,6 @@ class SurveyServiceTest {
 
 	@Test
 	@DisplayName("설문 정보 수정 실패 - 권한 없음")
-	@Order(7)
 	void updateFailure() {
 
 		saveSurvey();
@@ -225,6 +226,8 @@ class SurveyServiceTest {
 		var auth = authenticationManager.authenticate(
 			new UsernamePasswordAuthenticationToken("k2ngis", "testPassword2"));
 		SecurityContextHolder.getContext().setAuthentication(auth);
+
+		var id = repository.findByOwner("testId").getFirst().getId();
 
 		SurveyRequest request = new SurveyRequest(
 			"서베이 수정 테스트 제목",
@@ -234,7 +237,7 @@ class SurveyServiceTest {
 
 
 		CustomException exception = assertThrows(CustomException.class, () -> {
-			surveyService.update(18L, request, auth);
+			surveyService.update(id, request, auth);
 		});
 
 		assertThat(exception.getErrorCode()).isEqualTo(NOT_AUTHORIZED);
@@ -242,7 +245,6 @@ class SurveyServiceTest {
 
 	@Test
 	@DisplayName("설문 게시")
-	@Order(8)
 	void publish() {
 
 		saveSurvey();
@@ -251,7 +253,9 @@ class SurveyServiceTest {
 			new UsernamePasswordAuthenticationToken("k2ngis", "testPassword2"));
 		SecurityContextHolder.getContext().setAuthentication(auth);
 
-		SurveyResponse response = surveyService.publish(22L, auth);
+		var id = repository.findByOwner("k2ngis").getFirst().getId();
+
+		SurveyResponse response = surveyService.publish(id, auth);
 
 		assertThat(StringUtils.isNotBlank(response.publishId())).isTrue();
 		assertThat(StringUtils.isNotBlank(response.publishedAt())).isTrue();
@@ -259,7 +263,6 @@ class SurveyServiceTest {
 
 	@Test
 	@DisplayName("설문 정보 삭제")
-	@Order(9)
 	void delete() {
 
 		saveSurvey();
@@ -268,10 +271,12 @@ class SurveyServiceTest {
 			new UsernamePasswordAuthenticationToken("k2ngis", "testPassword2"));
 		SecurityContextHolder.getContext().setAuthentication(auth);
 
-		surveyService.delete(25L, auth);
+		var id = repository.findByOwner("k2ngis").getFirst().getId();
+
+		surveyService.delete(id, auth);
 
 		CustomException exception = assertThrows(CustomException.class, () -> {
-			surveyService.findById(25L, auth);
+			surveyService.findById(id, auth);
 		});
 
 		assertThat(exception.getErrorCode()).isEqualTo(NOT_FOUND_SURVEY);
