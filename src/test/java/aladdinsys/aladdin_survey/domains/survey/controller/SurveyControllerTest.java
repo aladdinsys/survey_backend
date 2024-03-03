@@ -73,7 +73,6 @@ class SurveyControllerTest {
     }
 
     @Test
-    @Order(1)
     @DisplayName("내 설문지 목록 조회")
     void getFindOwn() throws Exception {
         mockMvc.perform(get("/api/surveys/find-own")
@@ -87,7 +86,6 @@ class SurveyControllerTest {
     }
 
     @Test
-    @Order(2)
     @DisplayName("전체 설문지 목록 조회")
     void getFindAll() throws Exception {
         mockMvc.perform(get("/api/surveys")
@@ -101,7 +99,6 @@ class SurveyControllerTest {
     }
 
     @Test
-    @Order(3)
     @DisplayName("설문지 By ID 조회")
     void getFindById() throws Exception {
         mockMvc.perform(get("/api/surveys/" + surveyId)
@@ -112,11 +109,31 @@ class SurveyControllerTest {
                 .andExpect(jsonPath("$.result.description").value("Description 1"))
                 .andExpect(jsonPath("$.result.content").value("Content 1"))
                 .andDo(print());
-        System.out.println("id" + id);
     }
 
     @Test
-    @Order(4)
+    @DisplayName("존재하지 않는 설문지 조회")
+    void getSurveyNotFound() throws Exception {
+        Long nonExistingSurveyId = 99999L;
+        mockMvc.perform(get("/api/surveys/" + nonExistingSurveyId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType("application/json"))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("권한이 없는 사용자의 설문지 조회")
+    void getSurveyUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/surveys/" + surveyId)
+                        .contentType("application/json"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("설문지 생성")
     void post() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/surveys")
@@ -129,7 +146,17 @@ class SurveyControllerTest {
     }
 
     @Test
-    @Order(5)
+    @DisplayName("잘못된 형식의 설문지 생성 요청")
+    void createSurveyWithInvalidData() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/surveys")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType("application/json")
+                        .content("{\"title\": \"\", \"description\": \"\", \"content\": \"\"}"))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("설문지 수정")
     void patch() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/surveys/" + surveyId)
@@ -147,7 +174,6 @@ class SurveyControllerTest {
     }
 
     @Test
-    @Order(6)
     @DisplayName("본인 설문지 uuid 생성")
     void publish() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/surveys/" + surveyId + "/publish")
@@ -161,7 +187,6 @@ class SurveyControllerTest {
     }
 
     @Test
-    @Order(7)
     @DisplayName("설문지 생성 및 uuid 생성")
     void testPublish() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/surveys/publish")
@@ -175,7 +200,6 @@ class SurveyControllerTest {
     }
 
     @Test
-    @Order(8)
     @DisplayName("설문지 삭제")
     void delete() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/surveys/" + surveyId)
@@ -185,4 +209,5 @@ class SurveyControllerTest {
                 .andExpect(jsonPath("$.status").value("NO_CONTENT"))
                 .andDo(print());
     }
+
 }
