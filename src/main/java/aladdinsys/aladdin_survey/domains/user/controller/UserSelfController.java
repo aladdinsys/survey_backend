@@ -17,7 +17,7 @@ public class UserSelfController {
 
   private final UserService service;
 
-  @GetMapping(value = "/my-info", produces = "application/json")
+  @GetMapping(value = "/users/my-info", produces = "application/json")
   public DataResponseBody<ResponseDto> getMyInfo(Principal principal) {
     return DataResponseBody.of(service.myInfo(principal));
   }

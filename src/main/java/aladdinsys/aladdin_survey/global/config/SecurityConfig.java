@@ -28,7 +28,6 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
-        .cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
@@ -40,13 +39,14 @@ public class SecurityConfig {
                     .permitAll())
         .authorizeHttpRequests(
             auth -> auth.requestMatchers("/users/**").hasAnyRole("ADMIN", "USER"))
-        .authorizeHttpRequests(auth -> auth.requestMatchers("/api/**").hasAuthority("API-KEY"))
+        .authorizeHttpRequests(auth -> auth.requestMatchers("/open-api/**").hasAuthority("API-KEY"))
+        .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
         .sessionManagement(
             sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

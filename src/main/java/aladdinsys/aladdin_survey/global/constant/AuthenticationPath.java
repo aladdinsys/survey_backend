@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public enum AuthenticationPath {
   USER("users"),
+  SURVEY("surveys"),
   ;
 
   private final String path;
