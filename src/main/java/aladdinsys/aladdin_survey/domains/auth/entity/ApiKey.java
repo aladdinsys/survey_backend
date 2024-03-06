@@ -21,7 +21,7 @@ public class ApiKey {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "api_key", nullable = false, unique = true, length = 64)
+	@Column(name = "api_key", nullable = false, unique = true, length = 36)
 	private String key;
 
 	public ApiKey(@Nonnull String key) {
