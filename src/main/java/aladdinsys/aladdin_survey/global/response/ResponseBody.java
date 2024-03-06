@@ -17,7 +17,6 @@ public class ResponseBody {
   private final HttpStatus status;
   private final String message;
 
-
   public ResponseBody(HttpStatus status, String message) {
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

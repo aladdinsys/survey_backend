@@ -36,9 +36,10 @@ public class SecurityConfig {
                         "/error",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
-                        "/swagger-config/**").permitAll()
-        )
-        .authorizeHttpRequests(auth -> auth.requestMatchers("/users/**").hasAnyRole("ADMIN", "USER"))
+                        "/swagger-config/**")
+                    .permitAll())
+        .authorizeHttpRequests(
+            auth -> auth.requestMatchers("/users/**").hasAnyRole("ADMIN", "USER"))
         .authorizeHttpRequests(auth -> auth.requestMatchers("/api/**").hasAuthority("API-KEY"))
         .sessionManagement(
             sessionManagement ->

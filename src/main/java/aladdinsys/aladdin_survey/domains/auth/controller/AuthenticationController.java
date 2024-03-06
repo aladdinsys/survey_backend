@@ -40,5 +40,4 @@ public class AuthenticationController {
   public DataResponseBody<RefreshTokenDto> refreshToken(HttpServletRequest request) {
     return DataResponseBody.of(authenticationService.refreshToken(request));
   }
-
 }

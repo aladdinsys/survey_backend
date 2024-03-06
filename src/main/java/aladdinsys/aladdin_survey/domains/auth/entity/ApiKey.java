@@ -1,3 +1,4 @@
+/* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.domains.auth.entity;
 
 import jakarta.annotation.Nonnull;
@@ -17,14 +18,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "api_keys")
 public class ApiKey {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(name = "api_key", nullable = false, unique = true, length = 36)
-	private String key;
+  @Column(name = "api_key", nullable = false, unique = true, length = 36)
+  private String key;
 
-	public ApiKey(@Nonnull String key) {
-		this.key = key;
-	}
+  public ApiKey(@Nonnull String key) {
+    this.key = key;
+  }
 }
