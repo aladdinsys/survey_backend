@@ -23,3 +23,10 @@ Content-Type: application/json
 }
 
 > {% client.global.set("access-token", response.body.result.accessToken);  %}
+
+### Post Request
+# @no-cookie-jar
+POST {{domain}}:{{port}}/auth/api-keys/generate
+Content-Type: application/json
+
+> {% client.global.set("api-key", response.body.result.key);  %}

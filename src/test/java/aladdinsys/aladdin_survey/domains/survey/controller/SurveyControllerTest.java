@@ -1,8 +1,10 @@
 package aladdinsys.aladdin_survey.domains.survey.controller;
 
+import aladdinsys.aladdin_survey.domains.auth.dto.ApiKeyResponseDto;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignInRequestDto;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignInResponseDto;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignUpRequestDto;
+import aladdinsys.aladdin_survey.domains.auth.service.ApiKeyService;
 import aladdinsys.aladdin_survey.domains.auth.service.AuthenticationService;
 import aladdinsys.aladdin_survey.domains.survey.entity.Survey;
 import aladdinsys.aladdin_survey.domains.survey.repository.SurveyRepository;
@@ -45,9 +47,14 @@ class SurveyControllerTest {
     @Autowired
     SurveyRepository surveyRepository;
 
+    @Autowired
+    ApiKeyService apiKeyService;
+
     private String token;
     private Long id;
     private Long surveyId;
+
+    private ApiKeyResponseDto keyResponseDto;
 
     private Long createAndSaveSurvey(String title, String description, String content, String owner) {
         Survey survey = new Survey(title, description, content, owner);
@@ -69,13 +76,15 @@ class SurveyControllerTest {
         createAndSaveSurvey("Title 3", "Description 3", "Content 3", "user3");
         createAndSaveSurvey("Title 4", "Description 4", "Content 3", "user4");
 
+        keyResponseDto = apiKeyService.generateApiKey();
+
         em.clear();
     }
 
     @Test
     @DisplayName("내 설문지 목록 조회")
     void getFindOwn() throws Exception {
-        mockMvc.perform(get("/api/surveys/find-own")
+        mockMvc.perform(get("/surveys/find-own")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json"))
                 .andExpect(status().isOk())
@@ -88,7 +97,7 @@ class SurveyControllerTest {
     @Test
     @DisplayName("전체 설문지 목록 조회")
     void getFindAll() throws Exception {
-        mockMvc.perform(get("/api/surveys")
+        mockMvc.perform(get("/surveys")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json"))
                 .andExpect(status().isOk())
@@ -101,7 +110,7 @@ class SurveyControllerTest {
     @Test
     @DisplayName("설문지 By ID 조회")
     void getFindById() throws Exception {
-        mockMvc.perform(get("/api/surveys/" + surveyId)
+        mockMvc.perform(get("/surveys/" + surveyId)
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json"))
                 .andExpect(status().isOk())
@@ -115,7 +124,7 @@ class SurveyControllerTest {
     @DisplayName("존재하지 않는 설문지 조회")
     void getSurveyNotFound() throws Exception {
         Long nonExistingSurveyId = 99999L;
-        mockMvc.perform(get("/api/surveys/" + nonExistingSurveyId)
+        mockMvc.perform(get("/surveys/" + nonExistingSurveyId)
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json"))
                 .andExpect(status().is4xxClientError())
@@ -126,7 +135,7 @@ class SurveyControllerTest {
     @Test
     @DisplayName("권한이 없는 사용자의 설문지 조회")
     void getSurveyUnauthorized() throws Exception {
-        mockMvc.perform(get("/api/surveys/" + surveyId)
+        mockMvc.perform(get("/surveys/" + surveyId)
                         .contentType("application/json"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
@@ -136,7 +145,7 @@ class SurveyControllerTest {
     @Test
     @DisplayName("설문지 생성")
     void post() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/surveys")
+        mockMvc.perform(MockMvcRequestBuilders.post("/surveys")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
                         .content("{\"title\": \"Title 4\", \"description\": \"Description 4\", \"content\": \"Content 4\"}"))
@@ -148,7 +157,7 @@ class SurveyControllerTest {
     @Test
     @DisplayName("잘못된 형식의 설문지 생성 요청")
     void createSurveyWithInvalidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/surveys")
+        mockMvc.perform(MockMvcRequestBuilders.post("/surveys")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
                         .content("{\"title\": \"\", \"description\": \"\", \"content\": \"\"}"))
@@ -159,7 +168,7 @@ class SurveyControllerTest {
     @Test
     @DisplayName("설문지 수정")
     void patch() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/surveys/" + surveyId)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/surveys/" + surveyId)
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
                         .content("{\"title\": \"Title 5\", \"description\": \"Description 5\", \"content\": \"Content 5\"}"))
@@ -176,7 +185,7 @@ class SurveyControllerTest {
     @Test
     @DisplayName("본인 설문지 uuid 생성")
     void publish() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/surveys/" + surveyId + "/publish")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/surveys/" + surveyId + "/publish")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json"))
                 .andExpect(status().isOk())
@@ -189,7 +198,7 @@ class SurveyControllerTest {
     @Test
     @DisplayName("설문지 생성 및 uuid 생성")
     void testPublish() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/surveys/publish")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/surveys/publish")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
                         .content("{\"title\": \"Title 6\", \"description\": \"Description 6\", \"content\": \"Content 6\"}"))
@@ -202,7 +211,7 @@ class SurveyControllerTest {
     @Test
     @DisplayName("설문지 삭제")
     void delete() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/surveys/" + surveyId)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/surveys/" + surveyId)
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json"))
                 .andExpect(status().is2xxSuccessful())

@@ -1,20 +1,21 @@
 ### 사용자 전체 정보
 @access-token = client.global.get("access-token")
+@api-key = client.global.get("api-key")
 
 ### 설문조사 전체 정보
-GET {{domain}}:{{port}}/api/surveys
+GET {{domain}}:{{port}}/surveys
 Authorization: Bearer {{access-token}}
 
 ### 설문조사 정보 (설문조사 ID)
-GET {{domain}}:{{port}}/api/surveys/1
+GET {{domain}}:{{port}}/surveys/1
 Authorization: Bearer {{access-token}}
 
 ### 내 설문조사 정보
-GET {{domain}}:{{port}}/api/surveys/find-own
+GET {{domain}}:{{port}}/surveys/find-own
 Authorization: Bearer {{access-token}}
 
 ### 설문조사 입력
-POST {{domain}}:{{port}}/api/surveys
+POST {{domain}}:{{port}}/surveys
 Content-Type: application/json
 Authorization: Bearer {{access-token}}
 
@@ -25,7 +26,7 @@ Authorization: Bearer {{access-token}}
 }
 
 ### 설문조사 수정
-PATCH {{domain}}:{{port}}/api/surveys/1
+PATCH {{domain}}:{{port}}/surveys/1
 Content-Type: application/json
 Authorization: Bearer {{access-token}}
 
@@ -37,11 +38,15 @@ Authorization: Bearer {{access-token}}
 
 
 ### 설문조사 발행
-PATCH {{domain}}:{{port}}/api/surveys/1/publish
+PATCH {{domain}}:{{port}}/surveys/1/publish
 Content-Type: application/json
 Authorization: Bearer {{access-token}}
 
 ### 설문조사 삭제
-DELETE {{domain}}:{{port}}/api/surveys/
+DELETE {{domain}}:{{port}}/surveys/
 Content-Type: application/json
 Authorization: Bearer {{access-token}}
+
+### 설문조사  OPEN API
+GET {{domain}}:{{port}}/open-api/survey/ba68cd2c-ce90-4174-9691-b746c24cfae0
+API-KEY: 39e3f5ca-2f92-492d-b95e-fa185c204203

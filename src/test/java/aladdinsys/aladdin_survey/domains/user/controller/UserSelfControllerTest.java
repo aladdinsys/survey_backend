@@ -52,7 +52,7 @@ class UserSelfControllerTest {
     @Test
     @DisplayName("내 정보 조회")
     void getMyInfo() throws Exception {
-        mockMvc.perform(get("/my-info")
+        mockMvc.perform(get("/users/my-info")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.userId").value("user"))
