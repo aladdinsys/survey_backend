@@ -1,9 +1,10 @@
 ### 사용자 전체 정보
 @access-token = client.global.get("access-token")
+@api-key = client.global.get("api-key")
 
 ### 설문조사 전체 정보
 GET {{domain}}:{{port}}/api/surveys
-Authorization: Bearer {{access-token}}
+API-KEY: {{api-key}}
 
 ### 설문조사 정보 (설문조사 ID)
 GET {{domain}}:{{port}}/api/surveys/1

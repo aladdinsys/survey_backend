@@ -1,6 +1,7 @@
 /* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.global.config;
 
+import aladdinsys.aladdin_survey.global.security.ApiKeyAuthFilter;
 import aladdinsys.aladdin_survey.global.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+  private final ApiKeyAuthFilter apiKeyAuthFilter;
+
   private final JwtAuthenticationFilter jwtAuthFilter;
 
   private final AuthenticationProvider authenticationProvider;
@@ -31,18 +34,18 @@ public class SecurityConfig {
                 auth.requestMatchers(
                         "/auth/**",
                         "/error",
-                        "/open-api/**",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
-                        "/swagger-config/**")
-                    .permitAll())
-        .authorizeHttpRequests(auth -> auth.requestMatchers("/users/**").hasRole("ADMIN"))
-        .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                        "/swagger-config/**").permitAll()
+        )
+        .authorizeHttpRequests(auth -> auth.requestMatchers("/users/**").hasAnyRole("ADMIN", "USER"))
+        .authorizeHttpRequests(auth -> auth.requestMatchers("/api/**").hasAuthority("API-KEY"))
         .sessionManagement(
             sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider)
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

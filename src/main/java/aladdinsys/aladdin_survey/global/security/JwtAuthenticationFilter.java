@@ -1,9 +1,7 @@
 /* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.global.security;
 
-import static aladdinsys.aladdin_survey.global.constant.ErrorCode.*;
-
-import aladdinsys.aladdin_survey.global.constant.ExtractPath;
+import aladdinsys.aladdin_survey.global.constant.AuthenticationPath;
 import aladdinsys.aladdin_survey.global.exception.CustomException;
 import aladdinsys.aladdin_survey.global.response.ErrorResponseBody;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     try {
 
       Optional.of(request)
-          .filter(this::extracted)
+          .filter(this::authenticationRequired)
           .map(jwtProvider::getJwtFromRequest)
           .filter(jwtProvider::isAccessTokenValid)
           .map(jwtProvider::extractUsername)
@@ -80,15 +78,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     SecurityContextHolder.getContext().setAuthentication(authToken);
   }
 
-  private boolean extracted(HttpServletRequest request) {
+  private boolean authenticationRequired(HttpServletRequest request) {
     var path = request.getRequestURI();
-    ExtractPath[] values = ExtractPath.values();
-    for (ExtractPath value : values) {
+    AuthenticationPath[] values = AuthenticationPath.values();
+    for (AuthenticationPath value : values) {
       if (path.matches("^/" + value.getPath() + ".*")) {
-        return false;
+        return true;
       }
     }
 
-    return true;
+    return false;
   }
 }
