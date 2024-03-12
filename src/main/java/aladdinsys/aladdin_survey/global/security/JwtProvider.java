@@ -118,12 +118,13 @@ public class JwtProvider {
     } catch (ExpiredJwtException e) {
       throw new CustomException(EXPIRED_JWT_TOKEN);
     } catch (JwtException | IllegalArgumentException e) {
+      System.out.println("RefreshToken :" + e.getMessage());
       throw new CustomException(INVALID_JWT_TOKEN);
     }
   }
 
   private Key getSignInKey(final boolean isRefreshToken) {
-    byte[] keyBytes = Decoders.BASE64.decode(isRefreshToken ? accessSecretKey : refreshSecretKey);
+    byte[] keyBytes = Decoders.BASE64.decode(isRefreshToken ? refreshSecretKey : accessSecretKey);
     return Keys.hmacShaKeyFor(keyBytes);
   }
 

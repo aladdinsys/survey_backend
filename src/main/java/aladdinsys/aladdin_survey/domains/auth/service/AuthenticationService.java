@@ -132,6 +132,7 @@ public class AuthenticationService {
     String newRefreshToken;
 
     if (!jwtProvider.isRefreshTokenValid(refreshToken)) {
+      log.error("Refresh Token Error :" + refreshToken);
       throw new CustomException(INVALID_JWT_TOKEN);
     }
 
