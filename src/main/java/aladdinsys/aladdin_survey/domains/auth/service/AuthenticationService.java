@@ -124,7 +124,7 @@ public class AuthenticationService {
         .build();
   }
 
-  public RefreshTokenDto refreshToken(HttpServletRequest request) {
+  public SignInResponseDto refreshToken(HttpServletRequest request) {
 
     String refreshToken = jwtProvider.getJwtFromRequest(request);
 
@@ -144,9 +144,17 @@ public class AuthenticationService {
             .map(CustomUserDetails::new)
             .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
+    User user = userDetails.getUser();
+
     accessToken = jwtProvider.generateAccessToken(userDetails);
     newRefreshToken = jwtProvider.generateRefreshToken(userDetails);
 
-    return RefreshTokenDto.builder().accessToken(accessToken).refreshToken(newRefreshToken).build();
+    return SignInResponseDto.builder()
+        .accessToken(accessToken)
+        .refreshToken(newRefreshToken)
+        .role(user.getRole())
+        .name(user.getName())
+        .code(user.getCode())
+        .build();
   }
 }

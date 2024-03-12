@@ -2,12 +2,16 @@
 package aladdinsys.aladdin_survey.global.security;
 
 import aladdinsys.aladdin_survey.domains.user.entity.User;
+import lombok.Getter;
+
 import java.util.Collection;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+
+@Getter
 public class CustomUserDetails implements UserDetails {
 
   private final User user;
