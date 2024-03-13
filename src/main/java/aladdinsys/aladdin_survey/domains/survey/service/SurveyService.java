@@ -30,6 +30,7 @@ public class SurveyService {
             .title(request.title())
             .description(request.description())
             .content(request.content())
+            .center(request.center())
             .owner(principal.getName())
             .build();
 
@@ -48,7 +49,7 @@ public class SurveyService {
       throw new CustomException(NOT_AUTHORIZED);
     }
 
-    survey.update(request.title(), request.description(), request.content());
+    survey.update(request.title(), request.description(), request.content(), request.center());
   }
 
   @Transactional
@@ -74,6 +75,7 @@ public class SurveyService {
             .title(request.title())
             .description(request.description())
             .content(request.content())
+            .center(request.center())
             .owner(principal.getName())
             .build();
 

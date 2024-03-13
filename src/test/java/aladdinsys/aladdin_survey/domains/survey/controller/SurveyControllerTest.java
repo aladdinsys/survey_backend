@@ -6,6 +6,7 @@ import aladdinsys.aladdin_survey.domains.auth.dto.SignInResponseDto;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignUpRequestDto;
 import aladdinsys.aladdin_survey.domains.auth.service.ApiKeyService;
 import aladdinsys.aladdin_survey.domains.auth.service.AuthenticationService;
+import aladdinsys.aladdin_survey.domains.survey.entity.Spatial;
 import aladdinsys.aladdin_survey.domains.survey.entity.Survey;
 import aladdinsys.aladdin_survey.domains.survey.repository.SurveyRepository;
 import aladdinsys.aladdin_survey.domains.user.entity.User;
@@ -54,10 +55,9 @@ class SurveyControllerTest {
     private Long id;
     private Long surveyId;
 
-    private ApiKeyResponseDto keyResponseDto;
 
-    private Long createAndSaveSurvey(String title, String description, String content, String owner) {
-        Survey survey = new Survey(title, description, content, owner);
+    private Long createAndSaveSurvey(String title, String description, String content, Spatial center, String owner) {
+        Survey survey = new Survey(title, description, content, center, owner);
         survey = surveyRepository.save(survey);
         return survey.getId();
     }
@@ -71,12 +71,12 @@ class SurveyControllerTest {
         User testUser = userRepository.findByUserId("user1").orElseThrow(() -> new RuntimeException("User not found"));
         id = testUser.getId();
 
-        surveyId = createAndSaveSurvey("Title 1", "Description 1", "Content 1", "user1");
-        createAndSaveSurvey("Title 2", "Description 2", "Content 2", "user2");
-        createAndSaveSurvey("Title 3", "Description 3", "Content 3", "user3");
-        createAndSaveSurvey("Title 4", "Description 4", "Content 3", "user4");
+        Spatial center = new Spatial(126.784587, 37.645143);
 
-        keyResponseDto = apiKeyService.generateApiKey();
+        surveyId = createAndSaveSurvey("Title 1", "Description 1", "Content 1", center, "user1");
+        createAndSaveSurvey("Title 2", "Description 2", "Content 2", center, "user2");
+        createAndSaveSurvey("Title 3", "Description 3", "Content 3", center, "user3");
+        createAndSaveSurvey("Title 4", "Description 4", "Content 3", center, "user4");
 
         em.clear();
     }
@@ -148,7 +148,7 @@ class SurveyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/surveys")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
-                        .content("{\"title\": \"Title 4\", \"description\": \"Description 4\", \"content\": \"Content 4\"}"))
+                        .content("{\"title\":\"Title 5\",\"description\":\"Description\", \"center\":{\"x\":123.5,\"y\":38.34441},\"content\":\"[]\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.owner").value("user1"))
                 .andDo(print());
@@ -160,7 +160,7 @@ class SurveyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/surveys")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
-                        .content("{\"title\": \"\", \"description\": \"\", \"content\": \"\"}"))
+                        .content("{\"title\": \"\", \"description\": \"\", \"center\":{\"x\":123.5,\"y\":38.34441}, \"content\": \"\"}"))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
     }
@@ -171,7 +171,7 @@ class SurveyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/surveys/" + surveyId)
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
-                        .content("{\"title\": \"Title 5\", \"description\": \"Description 5\", \"content\": \"Content 5\"}"))
+                        .content("{\"title\": \"Title 5\", \"description\": \"Description 5\", \"center\":{\"x\":123.5,\"y\":38.34441}, \"content\": \"[]\"}"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value("ACCEPTED"))
                 .andDo(print());
@@ -179,7 +179,7 @@ class SurveyControllerTest {
         Survey updatedSurvey = surveyRepository.findById(surveyId).orElseThrow();
         assertEquals("Title 5", updatedSurvey.getTitle());
         assertEquals("Description 5", updatedSurvey.getDescription());
-        assertEquals("Content 5", updatedSurvey.getContent());
+        assertEquals("[]", updatedSurvey.getContent());
     }
 
     @Test
@@ -201,7 +201,7 @@ class SurveyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/surveys/publish")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
-                        .content("{\"title\": \"Title 6\", \"description\": \"Description 6\", \"content\": \"Content 6\"}"))
+                        .content("{\"title\": \"Title 6\", \"description\": \"Description 6\", \"center\":{\"x\":123.5,\"y\":38.34441}, \"content\": \"[]\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.publishId").isNotEmpty())
                 .andExpect(jsonPath("$.result.owner").value("user1"))

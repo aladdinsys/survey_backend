@@ -1,7 +1,9 @@
 /* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.domains.survey.entity;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -43,6 +45,11 @@ public class Survey {
   @Column(name = "publish_id", length = 36, unique = true)
   private String publishId;
 
+  @Embedded
+  @AttributeOverride(name = "x", column = @Column(name = "center_x"))
+  @AttributeOverride(name = "y", column = @Column(name = "center_y"))
+  private Spatial center;
+
   @CreatedBy private String owner;
 
   @CreatedDate
@@ -55,14 +62,19 @@ public class Survey {
 
   @Builder
   public Survey(
-      final String title, final String description, final String content, final String owner) {
+      final String title,
+      final String description,
+      final String content,
+      final Spatial center,
+      final String owner) {
     this.title = title;
     this.description = description;
     this.content = content;
+    this.center = center;
     this.owner = owner;
   }
 
-  public void update(String title, String description, String content) {
+  public void update(String title, String description, String content, Spatial center) {
 
     // FIXME 나중에 배포 전에 수정 해야 함
     // if (publishedAt != null) {
@@ -79,6 +91,10 @@ public class Survey {
 
     if (StringUtils.hasLength(content)) {
       this.content = content;
+    }
+
+    if (center != null) {
+      this.center = center;
     }
   }
 

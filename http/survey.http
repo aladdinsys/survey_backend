@@ -22,6 +22,10 @@ Authorization: Bearer {{access-token}}
 {
   "title": "설문조사 테스트",
   "description": "설문조사 설명",
+  "center": {
+    "x": 126.978388,
+    "y": 37.566610
+  },
   "content": "{\"sections\":[{\"section_name\":\"General Knowledge\",\"next_section\":\"Science\",\"questions\":[{\"question_text\":\"What is the capital of France?\",\"answers\":[\"Paris\",\"London\",\"Berlin\"]},{\"question_text\":\"Who wrote Romeo and Juliet?\",\"answers\":[\"William Shakespeare\",\"Jane Austen\",\"Charles Dickens\"]}]},{\"section_name\":\"Science\",\"questions\":[{\"question_text\":\"What is the largest mammal on Earth?\",\"answers\":[\"Blue Whale\",\"Elephant\",\"Giraffe\"]}]}]}"
 }
 
@@ -31,8 +35,12 @@ Content-Type: application/json
 Authorization: Bearer {{access-token}}
 
 {
-  "title": "설문조사 수정 테스트",
-  "description": "설문조사 설명 수정",
+  "title": "설문 조사 수정 테스트",
+  "description": "설문 조사 설명 수정",
+  "center": {
+    "x": 125.978388,
+    "y": 37.566610
+  },
   "content": "{\"sections\":[{\"section_name\":\"General Knowledge\",\"next_section\":\"Science\",\"questions\":[{\"question_text\":\"What is the capital of France?\",\"answers\":[\"Paris\",\"London\",\"Berlin\"]},{\"question_text\":\"Who wrote Romeo and Juliet?\",\"answers\":[\"William Shakespeare\",\"Jane Austen\",\"Charles Dickens\"]}]},{\"section_name\":\"Science\",\"questions\":[{\"question_text\":\"What is the largest mammal on Earth?\",\"answers\":[\"Blue Whale\",\"Elephant\",\"Giraffe\"]}]}]}"
 }
 

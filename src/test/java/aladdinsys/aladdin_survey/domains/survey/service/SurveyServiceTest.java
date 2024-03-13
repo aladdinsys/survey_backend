@@ -8,10 +8,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +20,7 @@ import aladdinsys.aladdin_survey.domains.auth.dto.SignUpRequestDto;
 import aladdinsys.aladdin_survey.domains.auth.service.AuthenticationService;
 import aladdinsys.aladdin_survey.domains.survey.dto.SurveyRequest;
 import aladdinsys.aladdin_survey.domains.survey.dto.SurveyResponse;
+import aladdinsys.aladdin_survey.domains.survey.entity.Spatial;
 import aladdinsys.aladdin_survey.domains.survey.entity.Survey;
 import aladdinsys.aladdin_survey.domains.survey.repository.SurveyRepository;
 import aladdinsys.aladdin_survey.global.exception.CustomException;
@@ -175,9 +173,12 @@ class SurveyServiceTest {
 			new UsernamePasswordAuthenticationToken("k2ngis", "testPassword2"));
 		SecurityContextHolder.getContext().setAuthentication(auth);
 
+		Spatial center = new Spatial(126.784587, 37.645143);
+
 		SurveyRequest request = new SurveyRequest(
 			"서베이 생성 테스트 제목",
 			"서베이 생성 테스트 설명",
+			center,
 			"{\"sections\":[]}"
 		);
 
@@ -201,9 +202,12 @@ class SurveyServiceTest {
 			new UsernamePasswordAuthenticationToken("k2ngis", "testPassword2"));
 		SecurityContextHolder.getContext().setAuthentication(auth);
 
+		Spatial center = new Spatial(126.784587, 37.645143);
+		
 		SurveyRequest request = new SurveyRequest(
 			"서베이 수정 테스트 제목",
 			"서베이 수정 테스트 설명",
+			center,
 			"{\"sections\":[]}"
 		);
 
@@ -229,9 +233,12 @@ class SurveyServiceTest {
 
 		var id = repository.findByOwner("testId").getFirst().getId();
 
+		Spatial center = new Spatial(126.784587, 37.645143);
+
 		SurveyRequest request = new SurveyRequest(
 			"서베이 수정 테스트 제목",
 			"서베이 수정 테스트 설명",
+			center,
 			"{\"sections\":[]}"
 		);
 

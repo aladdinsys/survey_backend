@@ -3,7 +3,6 @@ package aladdinsys.aladdin_survey.global.security;
 
 import aladdinsys.aladdin_survey.domains.auth.service.ApiKeyService;
 import aladdinsys.aladdin_survey.global.constant.ApiKeyPath;
-import aladdinsys.aladdin_survey.global.constant.AuthenticationPath;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,14 +34,13 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
 
     String apiKey = request.getHeader("API-KEY");
 
-    if(authenticationRequired(request)) {
+    if (authenticationRequired(request)) {
       if (apiKeyService.isValidApiKey(apiKey)) {
         SimpleGrantedAuthority apiKeyAuthority = new SimpleGrantedAuthority("API-KEY");
         Authentication authentication =
             new ApiKeyAuthenticationToken(apiKey, Collections.singletonList(apiKeyAuthority));
         SecurityContextHolder.getContext().setAuthentication(authentication);
       }
-
     }
 
     filterChain.doFilter(request, response);
