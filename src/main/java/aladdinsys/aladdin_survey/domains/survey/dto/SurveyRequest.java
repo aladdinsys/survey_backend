@@ -15,6 +15,6 @@ public record SurveyRequest(
         @NotBlank(message = "설문 설명은 공백이 될 수 없습니다.")
         @Size(max = 100, message = "설문 설명은 100자를 넘을 수 없습니다.")
         String description,
-    @NotNull(message = "중심 좌표는 Null 이 될 수 없습니다.  ") Spatial center,
     @NotNull(message = "설문 내용은 Null 이 될 수 없습니다.") @NotBlank(message = "설문 내용은 공백이 될 수 없습니다.")
-        String content) {}
+        String content,
+    @NotNull(message = "중심 좌표는 Null 이 될 수 없습니다.  ") Spatial center) {}

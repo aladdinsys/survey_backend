@@ -178,8 +178,8 @@ class SurveyServiceTest {
 		SurveyRequest request = new SurveyRequest(
 			"서베이 생성 테스트 제목",
 			"서베이 생성 테스트 설명",
-			center,
-			"{\"sections\":[]}"
+			"{\"sections\":[]}",
+			center
 		);
 
 		surveyService.save(request, auth);
@@ -207,8 +207,8 @@ class SurveyServiceTest {
 		SurveyRequest request = new SurveyRequest(
 			"서베이 수정 테스트 제목",
 			"서베이 수정 테스트 설명",
-			center,
-			"{\"sections\":[]}"
+			"{\"sections\":[]}",
+			center
 		);
 
 		var id = repository.findByOwner("k2ngis").getFirst().getId();
@@ -238,8 +238,8 @@ class SurveyServiceTest {
 		SurveyRequest request = new SurveyRequest(
 			"서베이 수정 테스트 제목",
 			"서베이 수정 테스트 설명",
-			center,
-			"{\"sections\":[]}"
+			"{\"sections\":[]}",
+			center
 		);
 
 

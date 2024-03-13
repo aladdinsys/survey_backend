@@ -148,7 +148,7 @@ class SurveyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/surveys")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
-                        .content("{\"title\":\"Title 5\",\"description\":\"Description\", \"center\":{\"x\":123.5,\"y\":38.34441},\"content\":\"[]\"}"))
+                        .content("{\"title\":\"Title 5\",\"description\":\"Description\",\"content\":\"[]\", \"center\":{\"x\":123.5,\"y\":38.34441}}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.owner").value("user1"))
                 .andDo(print());
@@ -160,7 +160,7 @@ class SurveyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/surveys")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
-                        .content("{\"title\": \"\", \"description\": \"\", \"center\":{\"x\":123.5,\"y\":38.34441}, \"content\": \"\"}"))
+                        .content("{\"title\": \"\", \"description\": \"\", \"content\": \"\", \"center\":{\"x\":123.5,\"y\":38.34441}}"))
                 .andExpect(status().isBadRequest())
                 .andDo(print());
     }
@@ -171,7 +171,7 @@ class SurveyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/surveys/" + surveyId)
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
-                        .content("{\"title\": \"Title 5\", \"description\": \"Description 5\", \"center\":{\"x\":123.5,\"y\":38.34441}, \"content\": \"[]\"}"))
+                        .content("{\"title\": \"Title 5\", \"description\": \"Description 5\", \"content\": \"[]\", \"center\":{\"x\":123.5,\"y\":38.34441}}"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.status").value("ACCEPTED"))
                 .andDo(print());
@@ -201,7 +201,7 @@ class SurveyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch("/surveys/publish")
                         .header("Authorization", "Bearer " + token)
                         .contentType("application/json")
-                        .content("{\"title\": \"Title 6\", \"description\": \"Description 6\", \"center\":{\"x\":123.5,\"y\":38.34441}, \"content\": \"[]\"}"))
+                        .content("{\"title\": \"Title 6\", \"description\": \"Description 6\", \"content\": \"[]\", \"center\":{\"x\":123.5,\"y\":38.34441}}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.publishId").isNotEmpty())
                 .andExpect(jsonPath("$.result.owner").value("user1"))

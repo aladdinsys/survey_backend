@@ -42,13 +42,13 @@ public class Survey {
   @Column(columnDefinition = "TEXT", name = "content")
   private String content;
 
-  @Column(name = "publish_id", length = 36, unique = true)
-  private String publishId;
-
   @Embedded
   @AttributeOverride(name = "x", column = @Column(name = "center_x"))
   @AttributeOverride(name = "y", column = @Column(name = "center_y"))
   private Spatial center;
+
+  @Column(name = "publish_id", length = 36, unique = true)
+  private String publishId;
 
   @CreatedBy private String owner;
 
