@@ -141,6 +141,7 @@ public class SurveyService {
         .title(survey.getTitle())
         .description(survey.getDescription())
         .content(survey.getContent())
+        .center(survey.getCenter())
         .publishId(survey.getPublishId())
         .owner(survey.getOwner())
         .createdAt(getDateTimeString(survey.getCreatedAt()))
