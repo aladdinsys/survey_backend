@@ -3,7 +3,6 @@ package aladdinsys.aladdin_survey.domains.auth.controller;
 
 import static aladdinsys.aladdin_survey.global.constant.SuccessCode.*;
 
-import aladdinsys.aladdin_survey.domains.auth.dto.RefreshTokenDto;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignInRequestDto;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignInResponseDto;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignUpRequestDto;

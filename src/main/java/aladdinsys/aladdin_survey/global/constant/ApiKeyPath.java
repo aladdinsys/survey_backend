@@ -1,14 +1,16 @@
+/* (C) 2024 AladdinSystem License */
 package aladdinsys.aladdin_survey.global.constant;
 
 import lombok.Getter;
 
 @Getter
 public enum ApiKeyPath {
-	OPENAPI("open-api"),
-	;
+  OPENAPI("open-api"),
+  ;
 
-	private final String path;
-	ApiKeyPath(String path) {
-		this.path = path;
-	}
+  private final String path;
+
+  ApiKeyPath(String path) {
+    this.path = path;
+  }
 }
