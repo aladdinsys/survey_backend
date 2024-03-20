@@ -20,6 +20,17 @@ jobs:
     permissions:
       contents: read
 
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 21
@@ -33,7 +44,7 @@ jobs:
     - name: Gradle Wrapper
       run: gradle wrapper --gradle-version 8.5
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew clean build
     
     - name: copy file via ssh password
       uses: appleboy/scp-action@v0.1.7

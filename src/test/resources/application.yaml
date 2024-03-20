@@ -12,6 +12,11 @@ spring:
     properties:
       hibernate:
         show_sql: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 1000
 
 jwt:
   access-token:

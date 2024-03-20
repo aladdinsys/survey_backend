@@ -3,6 +3,8 @@ package aladdinsys.aladdin_survey.global.security;
 
 import static aladdinsys.aladdin_survey.global.constant.ErrorCode.*;
 
+import aladdinsys.aladdin_survey.domains.auth.entity.RefreshToken;
+import aladdinsys.aladdin_survey.domains.auth.repository.RefreshTokenRepository;
 import aladdinsys.aladdin_survey.global.exception.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -43,6 +45,12 @@ public class JwtProvider {
 
   @Value("${jwt.refresh-token.expiration}")
   private long refreshExpiration;
+
+  private final RefreshTokenRepository refreshTokenRepository;
+
+  public JwtProvider(RefreshTokenRepository refreshTokenRepository) {
+    this.refreshTokenRepository = refreshTokenRepository;
+  }
 
   @PostConstruct
   protected void init() {
@@ -104,22 +112,31 @@ public class JwtProvider {
 
       return true;
     } catch (ExpiredJwtException e) {
-      throw new CustomException(EXPIRED_JWT_TOKEN);
+      throw new CustomException(EXPIRED_ACCESS_TOKEN);
     } catch (JwtException | IllegalArgumentException e) {
-      throw new CustomException(INVALID_JWT_TOKEN);
+      throw new CustomException(INVALID_ACCESS_TOKEN);
     }
   }
 
   public boolean isRefreshTokenValid(String token) {
     try {
-      Jwts.parserBuilder().setSigningKey(getSignInKey(true)).build().parseClaimsJws(token);
+
+      RefreshToken refreshToken =
+          refreshTokenRepository
+              .findByToken(token)
+              .orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
+
+      Jwts.parserBuilder()
+          .setSigningKey(getSignInKey(true))
+          .build()
+          .parseClaimsJws(refreshToken.getToken());
 
       return true;
     } catch (ExpiredJwtException e) {
-      throw new CustomException(EXPIRED_JWT_TOKEN);
+      throw new CustomException(EXPIRED_REFRESH_TOKEN);
     } catch (JwtException | IllegalArgumentException e) {
       System.out.println("RefreshToken :" + e.getMessage());
-      throw new CustomException(INVALID_JWT_TOKEN);
+      throw new CustomException(INVALID_REFRESH_TOKEN);
     }
   }
 

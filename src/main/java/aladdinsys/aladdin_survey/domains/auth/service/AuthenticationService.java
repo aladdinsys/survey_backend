@@ -6,6 +6,8 @@ import static aladdinsys.aladdin_survey.global.constant.ErrorCode.*;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignInRequestDto;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignInResponseDto;
 import aladdinsys.aladdin_survey.domains.auth.dto.SignUpRequestDto;
+import aladdinsys.aladdin_survey.domains.auth.entity.RefreshToken;
+import aladdinsys.aladdin_survey.domains.auth.repository.RefreshTokenRepository;
 import aladdinsys.aladdin_survey.domains.user.constant.Role;
 import aladdinsys.aladdin_survey.domains.user.entity.User;
 import aladdinsys.aladdin_survey.domains.user.repository.UserRepository;
@@ -16,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -29,11 +32,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthenticationService {
 
   private final UserRepository userRepository;
+  private final RefreshTokenRepository refreshTokenRepository;
+
   private final PasswordEncoder passwordEncoder;
-
   private final JwtProvider jwtProvider;
-
   private final AuthenticationManager authenticationManager;
+
+  @Value("${jwt.refresh-token.expiration}")
+  private long refreshExpiration;
 
   @Transactional
   public void signUpAdmin(final SignUpRequestDto signUpRequestDto) {
@@ -114,6 +120,8 @@ public class AuthenticationService {
     String jwtToken = jwtProvider.generateAccessToken(userDetails);
     String refreshToken = jwtProvider.generateRefreshToken(userDetails);
 
+    refreshTokenRepository.save(RefreshToken.of(user.getUserId(), refreshToken, refreshExpiration));
+
     return SignInResponseDto.builder()
         .accessToken(jwtToken)
         .refreshToken(refreshToken)
@@ -132,7 +140,7 @@ public class AuthenticationService {
 
     if (!jwtProvider.isRefreshTokenValid(refreshToken)) {
       log.error("Refresh Token Error :" + refreshToken);
-      throw new CustomException(INVALID_JWT_TOKEN);
+      throw new CustomException(INVALID_REFRESH_TOKEN);
     }
 
     String userId = jwtProvider.extractUsername(refreshToken, true);
@@ -147,6 +155,8 @@ public class AuthenticationService {
 
     accessToken = jwtProvider.generateAccessToken(userDetails);
     newRefreshToken = jwtProvider.generateRefreshToken(userDetails);
+
+    refreshTokenRepository.save(RefreshToken.of(userId, newRefreshToken, refreshExpiration));
 
     return SignInResponseDto.builder()
         .accessToken(accessToken)
