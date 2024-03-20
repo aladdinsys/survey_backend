@@ -6,28 +6,22 @@ server:
       enabled: true
       force: true
 
+
 spring:
   config:
     activate:
       on-profile: local
-  thymeleaf:
-    cache: false
-    prefix: classpath:/templates/
-    suffix: .html
-    check-template-location: true
   devtools:
     livereload:
       enabled: true
   threads:
     virtual:
       enabled: true
-
   datasource:
     url: jdbc:h2:tcp://localhost/~/survey;
     driver-class-name: org.h2.Driver
     username: aladdin
     password:
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -36,6 +30,15 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 1000
+  cache:
+    type: redis
+    redis:
+      time-to-live: 60000
 
 jwt:
   access-token:
